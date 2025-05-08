@@ -1,26 +1,47 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
 import HelloWorld from './components/HelloWorld.vue'
+import Header from '@/components/Header.vue'
+
 </script>
 
 <template>
-  <header>
-
-
+  <div class="layout">
+    <Header />
+    <transition name="fade" mode="out-in">
+      <router-view />
+    </transition>
+  </div>
+  <!-- <header>
     <div class="wrapper">
-      <!-- <HelloWorld msg="You did it!" /> -->
-
+      <HelloWorld msg="You did it!" />
       <nav>
-        <!-- <RouterLink to="/">Home</RouterLink> -->
-        <!-- <RouterLink to="/about">About</RouterLink> -->
+        <RouterLink to="/">Home</RouterLink>
+        <RouterLink to="/about">About</RouterLink>
       </nav>
     </div>
-  </header>
-
-  <RouterView />
+  </header> -->
 </template>
 
 <style scoped>
+/* 通用頁面寬度與左右邊距設定 */
+.layout {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* 頁面切換動畫 */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 1s;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
 /* header {
   line-height: 1.5;
   max-height: 100vh;

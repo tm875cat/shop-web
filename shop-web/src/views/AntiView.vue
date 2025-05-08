@@ -1,5 +1,5 @@
 <template>
-    <Header />
+
     <!-- 商品圖區域 -->
     <div class="product_area">
         <Swiper :modules="[Pagination, Autoplay]" :pagination="{ clickable: true }" :loop="true"
@@ -11,18 +11,20 @@
     </div>
     <!-- 全部商品按鈕 -->
     <div class="shop_all_area">
-        <button class="shop_all_buutton">SHOP ALL</button>
+        <RouterLink to="/product"> <button class="shop_all_buutton">SHOP ALL</button></RouterLink>
+
+
     </div>
     <Footer />
 
 </template>
 <script setup>
+import { RouterLink, RouterView } from 'vue-router'
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import { Pagination, Autoplay } from 'swiper/modules'
 // 匯入 Swiper 樣式
 import 'swiper/css'
 import 'swiper/css/pagination'
-import Header from '@/components/Header.vue'
 import Footer from '@/components/Footer.vue'
 
 import { ref } from 'vue'
