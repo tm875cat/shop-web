@@ -29,8 +29,7 @@
             <div v-for="product in visibleProducts" :key="product.id" class="product_card">
                 <img :src="product.pic" alt="圖片">
                 <div class="title">
-                    <h2>{{ product.no }}</h2>
-                    <h2>{{ product.describe }}</h2>
+                    <h2>{{ product.no }} {{ product.describe }}</h2>
                 </div>
                 <h3>{{ product.name }}</h3>
                 <p>NT${{ product.price }} </p>
@@ -178,18 +177,29 @@ watch(itemsPerPage, () => {
 }
 
 .product_card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     width: calc(50% - 4px);
     /* 兩欄，每欄佔 50% - gap 一半 */
     box-sizing: border-box;
-    // padding: 12px;
     border: 1px solid #ccc;
     border-radius: 8px;
-    text-align: center;
     margin-bottom: 20px;
 
     img {
         width: 100%;
+        margin-bottom: 15px;
 
+    }
+
+    .title {
+        outline: red solid;
+
+
+        h2 {
+            font-family: 'Tenor Sans', sans-serif;
+        }
     }
 }
 

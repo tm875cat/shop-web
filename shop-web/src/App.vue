@@ -24,6 +24,15 @@ import Header from '@/components/Header.vue'
 </template>
 
 <style scoped>
+/* 引入字體 */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Anonymous+Pro:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;700&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=Tenor+Sans&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Anonymous+Pro&display=swap');
+
+
 /* 通用頁面寬度與左右邊距設定 */
 .layout {
   max-width: 1200px;
