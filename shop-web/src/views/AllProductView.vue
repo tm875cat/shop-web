@@ -27,12 +27,18 @@
         <!-- 商品清單 -->
         <div class="product_list">
             <div v-for="product in visibleProducts" :key="product.id" class="product_card">
-                <img :src="product.pic" alt="圖片">
+                <div class="pic" @click.stop="toggleButton(product.id)">
+                    <img :src="product.pic" :alt="product.name">
+                    <button v-if="activeProductId === product.id">加入購物車</button>
+                </div>
+
                 <div class="title">
                     <h2>{{ product.no }} {{ product.describe }}</h2>
                 </div>
                 <h3>{{ product.name }}</h3>
                 <p>NT${{ product.price }} </p>
+                <p class="original_price">NT${{ product.originalPrice }}</p>
+                <button>加入購物車</button>
             </div>
         </div>
 
@@ -45,39 +51,62 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 const isSortOpen = ref(false)// 排序方式的下拉式選單是否開啟
 const isItemOpen = ref(false)// 每頁筆數的下拉式選單是否開啟
-
 const sortOption = ref('') // 商品排序方式預設由新到舊
-const itemsPerPage = ref("6") // 每頁顯示幾筆商品
-const currentPage = ref(1) // 當前頁數
-
 // 假資料圖片匯入
 import product1 from '@/assets/product/product_1.png'
 import product2 from '@/assets/product/product_2.png'
 import product3 from '@/assets/product/product_3.png'
 // 假資料
-const products = ref([
-    { id: 1, pic: product1, no: "A01", describe: "本期推薦", name: '紅色T-shirt', price: 500 },
-    { id: 2, pic: product2, no: "A01", describe: "本期推薦", name: '牛仔褲', price: 900 },
-    { id: 3, pic: product3, no: "A01", describe: "本期推薦", name: '白色T-shirt', price: 600 },
-    { id: 4, pic: product1, no: "A01", describe: "本期推薦", name: '運動鞋', price: 1500 },
-    { id: 5, pic: product2, no: "A01", describe: "本期推薦", name: '毛衣', price: 800 },
-    { id: 6, pic: product3, no: "A01", describe: "本期推薦", name: '短裙', price: 700 },
-    { id: 7, pic: product1, no: "A01", describe: "本期推薦", name: '長袖T', price: 550 },
-    { id: 8, pic: product2, no: "A01", describe: "本期推薦", name: '外套', price: 1200 },
-    { id: 9, pic: product3, no: "A01", describe: "本期推薦", name: '涼鞋', price: 400 },
-    { id: 10, pic: product1, no: "A01", describe: "本期推薦", name: '休閒帽', price: 300 },
-    { id: 11, pic: product2, no: "A01", describe: "本期推薦", name: '牛仔外套', price: 1600 },
-    { id: 12, pic: product3, no: "A01", describe: "本期推薦", name: '皮帶', price: 350 },
-    { id: 13, pic: product1, no: "A01", describe: "本期推薦", name: '運動褲', price: 850 },
-    { id: 14, pic: product2, no: "A01", describe: "本期推薦", name: '涼感衣', price: 520 },
-])
+import { useProductStore } from '@/stores/productStore'
+
+const productStore = useProductStore()
+// const products = ref([
+//     { id: 1, pic: product1, no: "A01", describe: "本期推薦", name: '紅色T-shirt', price: 500, originalPrice: 3000, showButton: false },
+//     { id: 2, pic: product2, no: "A01", describe: "本期推薦", name: '牛仔褲', price: 900, originalPrice: 3000, showButton: false },
+//     { id: 3, pic: product3, no: "A01", describe: "本期推薦", name: '白色T-shirt', price: 600, originalPrice: 3000, showButton: false },
+//     { id: 4, pic: product1, no: "A01", describe: "本期推薦", name: '運動鞋', price: 1500, originalPrice: 3000, showButton: false },
+//     { id: 5, pic: product2, no: "A01", describe: "本期推薦", name: '毛衣', price: 800, originalPrice: 3000, showButton: false },
+//     { id: 6, pic: product3, no: "A01", describe: "本期推薦", name: '短裙', price: 700, originalPrice: 3000, showButton: false },
+//     { id: 7, pic: product1, no: "A01", describe: "本期推薦", name: '長袖T', price: 550, originalPrice: 3000, showButton: false },
+//     { id: 8, pic: product2, no: "A01", describe: "本期推薦", name: '外套', price: 1200, originalPrice: 3000, showButton: false },
+//     { id: 9, pic: product3, no: "A01", describe: "本期推薦", name: '涼鞋', price: 400, originalPrice: 3000, showButton: false },
+//     { id: 10, pic: product1, no: "A01", describe: "本期推薦", name: '休閒帽', price: 300, originalPrice: 3000, showButton: false },
+//     { id: 11, pic: product2, no: "A01", describe: "本期推薦", name: '牛仔外套', price: 1600, originalPrice: 3000, showButton: false },
+//     { id: 12, pic: product3, no: "A01", describe: "本期推薦", name: '皮帶', price: 350, originalPrice: 3000, showButton: false },
+//     { id: 13, pic: product1, no: "A01", describe: "本期推薦", name: '運動褲', price: 850, originalPrice: 3000, showButton: false },
+//     { id: 14, pic: product2, no: "A01", describe: "本期推薦", name: '涼感衣', price: 520, originalPrice: 3000, showButton: false },
+// ])
+// ------------------function----------------------
+const activeProductId = ref(null)// 用來記錄目前哪一個商品的「加入購物車」按鈕正在顯示（透過商品 id 區分）
+
+// 切換某商品的按鈕顯示狀態，如果目前是該商品就關閉，否則顯示它
+function toggleButton(id) {
+    activeProductId.value = activeProductId.value === id ? null : id
+}
+// 點擊頁面其他地方時，關閉按鈕（只有點擊不在 .pic 元素內時才會執行）
+function handleClickOutside(event) {
+    const clickedInside = event.target.closest('.pic') // 判斷點擊位置是否在 .pic 元素內
+    if (!clickedInside) {
+        activeProductId.value = null
+    }
+}
+// 掛載時綁定全頁的點擊事件
+onMounted(() => {
+    window.addEventListener('click', handleClickOutside)
+})
+
+// 元件卸載時移除事件監聽，避免記憶體洩漏
+onBeforeUnmount(() => {
+    window.removeEventListener('click', handleClickOutside)
+})
 
 // sortedProducts：根據 sortOption 對商品做排序
+
 const sortedProducts = computed(() => {
-    let sorted = [...products.value]
+    let sorted = [...productStore.products]
     if (sortOption.value === 'priceHigh') {
         sorted.sort((a, b) => b.price - a.price)
     } else if (sortOption.value === 'priceLow') {
@@ -87,7 +116,8 @@ const sortedProducts = computed(() => {
     }
     return sorted
 })
-
+const itemsPerPage = ref(6) // 每頁顯示幾筆商品
+const currentPage = ref(1) // 當前頁數
 // visibleProducts：計算當前頁數顯示的商品
 const visibleProducts = computed(() => {
     const startIndex = (currentPage.value - 1) * itemsPerPage.value
@@ -177,29 +207,80 @@ watch(itemsPerPage, () => {
 }
 
 .product_card {
+    // outline: red solid;
     display: flex;
     flex-direction: column;
     align-items: center;
     width: calc(50% - 4px);
-    /* 兩欄，每欄佔 50% - gap 一半 */
+    /* 兩欄，每欄佔 50%  */
     box-sizing: border-box;
-    border: 1px solid #ccc;
     border-radius: 8px;
     margin-bottom: 20px;
 
-    img {
-        width: 100%;
-        margin-bottom: 15px;
+    .pic {
 
+        position: relative;
+
+        img {
+            width: 100%;
+        }
+
+        button {
+            font-family: 'Anonymous Pro', monospace;
+            color: white;
+            font-weight: bold;
+            width: 100%; // 與圖片同寬
+            height: 33px;
+            background-color: rgba(167, 64, 72, 1);
+            border: 0;
+            position: absolute;
+            bottom: 0; // 貼底
+            left: 0;
+            color: white;
+            font-size: 14px;
+        }
+
+        margin-bottom: 20px;
     }
 
-    .title {
-        outline: red solid;
 
+    // 標題ex:A01 本期推薦
+    .title {
+        margin-bottom: 15px;
 
         h2 {
             font-family: 'Tenor Sans', sans-serif;
         }
+    }
+
+    // 品名
+    h3 {
+        font-weight: bold;
+        font-family: 'Anonymous Pro', monospace;
+        margin-bottom: 15px;
+    }
+
+    //價格
+    p {
+        font-family: 'Tenor Sans', sans-serif;
+        margin-bottom: 5px;
+    }
+
+    // 原價
+    .original_price {
+        text-decoration: line-through; //劃掉
+        color: rgba(203, 203, 203, 1);
+    }
+
+    //加入購物車按鈕
+    button {
+        font-family: 'Anonymous Pro', monospace;
+        color: white;
+        font-weight: bold;
+        width: 130px;
+        height: 33px;
+        background-color: rgba(167, 64, 72, 1);
+        border: 0;
     }
 }
 

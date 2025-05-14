@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Anti from '../views/AntiView.vue'
-import Product from '../views/ProductView.vue'
+import AllProduct from '../views/AllProductView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -11,9 +11,9 @@ const router = createRouter({
       component: Anti,
     },
     {
-      path: '/product',
-      name: 'product',
-      component: Product,
+      path: '/all-product',
+      name: 'all-product',
+      component: AllProduct,
     },
     // ,
     // {

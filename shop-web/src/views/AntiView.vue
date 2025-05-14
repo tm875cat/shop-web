@@ -11,7 +11,7 @@
     </div>
     <!-- 全部商品按鈕 -->
     <div class="shop_all_area">
-        <RouterLink to="/product"> <button class="shop_all_buutton">SHOP ALL</button></RouterLink>
+        <RouterLink to="/all-product"> <button class="shop_all_buutton">SHOP ALL</button></RouterLink>
 
 
     </div>
@@ -19,7 +19,7 @@
 
 </template>
 <script setup>
-import { RouterLink, RouterView } from 'vue-router'
+import { RouterLink } from 'vue-router'
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import { Pagination, Autoplay } from 'swiper/modules'
 // 匯入 Swiper 樣式
