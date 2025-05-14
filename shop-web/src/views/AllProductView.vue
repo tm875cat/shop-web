@@ -27,8 +27,8 @@
         <!-- 商品清單 -->
         <div class="product_list">
             <div v-for="product in visibleProducts" :key="product.id" class="product_card">
-                <div class="pic" @click.stop="toggleButton(product.id)">
-                    <img :src="product.pic" :alt="product.name">
+                <div class="pic">
+                    <img :src="product.pic" :alt="product.name" @click.stop="toggleButton(product.id)">
                     <button v-if="activeProductId === product.id">加入購物車</button>
                 </div>
 
@@ -44,8 +44,17 @@
 
         <!-- 分頁按鈕 -->
         <div class="pagination">
-            <button @click="currentPage--" :disabled="currentPage <= 1">上一頁</button>
-            <button @click="currentPage++" :disabled="currentPage >= totalPages">下一頁</button>
+            <button @click="prevPageWindow" :disabled="pageWindowStart <= 1" class="arrow_button prev_button"></button>
+
+            <div class="page_numbers">
+                <button v-for="page in visiblePageNumbers" :key="page" :class="{ active: currentPage === page }"
+                    @click="goToPage(page)">
+                    {{ page }}
+                </button>
+            </div>
+
+            <button @click="nextPageWindow" :disabled="pageWindowStart + pageWindowSize > totalPages"
+                class="arrow_button next_button"></button>
         </div>
     </div>
 </template>
@@ -55,31 +64,13 @@ import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 const isSortOpen = ref(false)// 排序方式的下拉式選單是否開啟
 const isItemOpen = ref(false)// 每頁筆數的下拉式選單是否開啟
 const sortOption = ref('') // 商品排序方式預設由新到舊
-// 假資料圖片匯入
-import product1 from '@/assets/product/product_1.png'
-import product2 from '@/assets/product/product_2.png'
-import product3 from '@/assets/product/product_3.png'
 // 假資料
 import { useProductStore } from '@/stores/productStore'
 
 const productStore = useProductStore()
-// const products = ref([
-//     { id: 1, pic: product1, no: "A01", describe: "本期推薦", name: '紅色T-shirt', price: 500, originalPrice: 3000, showButton: false },
-//     { id: 2, pic: product2, no: "A01", describe: "本期推薦", name: '牛仔褲', price: 900, originalPrice: 3000, showButton: false },
-//     { id: 3, pic: product3, no: "A01", describe: "本期推薦", name: '白色T-shirt', price: 600, originalPrice: 3000, showButton: false },
-//     { id: 4, pic: product1, no: "A01", describe: "本期推薦", name: '運動鞋', price: 1500, originalPrice: 3000, showButton: false },
-//     { id: 5, pic: product2, no: "A01", describe: "本期推薦", name: '毛衣', price: 800, originalPrice: 3000, showButton: false },
-//     { id: 6, pic: product3, no: "A01", describe: "本期推薦", name: '短裙', price: 700, originalPrice: 3000, showButton: false },
-//     { id: 7, pic: product1, no: "A01", describe: "本期推薦", name: '長袖T', price: 550, originalPrice: 3000, showButton: false },
-//     { id: 8, pic: product2, no: "A01", describe: "本期推薦", name: '外套', price: 1200, originalPrice: 3000, showButton: false },
-//     { id: 9, pic: product3, no: "A01", describe: "本期推薦", name: '涼鞋', price: 400, originalPrice: 3000, showButton: false },
-//     { id: 10, pic: product1, no: "A01", describe: "本期推薦", name: '休閒帽', price: 300, originalPrice: 3000, showButton: false },
-//     { id: 11, pic: product2, no: "A01", describe: "本期推薦", name: '牛仔外套', price: 1600, originalPrice: 3000, showButton: false },
-//     { id: 12, pic: product3, no: "A01", describe: "本期推薦", name: '皮帶', price: 350, originalPrice: 3000, showButton: false },
-//     { id: 13, pic: product1, no: "A01", describe: "本期推薦", name: '運動褲', price: 850, originalPrice: 3000, showButton: false },
-//     { id: 14, pic: product2, no: "A01", describe: "本期推薦", name: '涼感衣', price: 520, originalPrice: 3000, showButton: false },
-// ])
+
 // ------------------function----------------------
+// @購物車按鈕顯示邏輯
 const activeProductId = ref(null)// 用來記錄目前哪一個商品的「加入購物車」按鈕正在顯示（透過商品 id 區分）
 
 // 切換某商品的按鈕顯示狀態，如果目前是該商品就關閉，否則顯示它
@@ -102,9 +93,8 @@ onMounted(() => {
 onBeforeUnmount(() => {
     window.removeEventListener('click', handleClickOutside)
 })
-
+// @排序邏輯
 // sortedProducts：根據 sortOption 對商品做排序
-
 const sortedProducts = computed(() => {
     let sorted = [...productStore.products]
     if (sortOption.value === 'priceHigh') {
@@ -116,6 +106,7 @@ const sortedProducts = computed(() => {
     }
     return sorted
 })
+// @分頁邏輯
 const itemsPerPage = ref(6) // 每頁顯示幾筆商品
 const currentPage = ref(1) // 當前頁數
 // visibleProducts：計算當前頁數顯示的商品
@@ -134,6 +125,38 @@ const totalPages = computed(() => {
 watch(itemsPerPage, () => {
     currentPage.value = 1
 })
+// @底層分頁按鈕邏輯
+const pageWindowStart = ref(1) // 當前頁碼視窗起始頁，例如 1～5
+const pageWindowSize = 3       // 每次最多顯示幾個頁碼
+
+// 動態計算目前要顯示哪些頁碼
+const visiblePageNumbers = computed(() => {
+    const pages = []
+    const end = Math.min(pageWindowStart.value + pageWindowSize - 1, totalPages.value)
+    for (let i = pageWindowStart.value; i <= end; i++) {
+        pages.push(i)
+    }
+    return pages
+})
+
+// 點擊左箭頭時，頁碼視窗往左移
+function prevPageWindow() {
+    if (pageWindowStart.value > 1) {
+        pageWindowStart.value -= pageWindowSize
+    }
+}
+
+// 點擊右箭頭時，頁碼視窗往右移
+function nextPageWindow() {
+    if (pageWindowStart.value + pageWindowSize <= totalPages.value) {
+        pageWindowStart.value += pageWindowSize
+    }
+}
+
+// 點數字切換頁面
+function goToPage(page) {
+    currentPage.value = page
+}
 </script>
 
 
@@ -168,6 +191,7 @@ watch(itemsPerPage, () => {
     padding: 16px;
 }
 
+// 分頁 排序選單
 .filter_bar {
     display: flex;
     flex-wrap: wrap;
@@ -199,6 +223,7 @@ watch(itemsPerPage, () => {
     }
 }
 
+//商品清單
 .product_list {
     display: flex;
     flex-wrap: wrap;
@@ -284,9 +309,71 @@ watch(itemsPerPage, () => {
     }
 }
 
-.loading {
-    text-align: center;
-    padding: 20px;
-    color: #888;
+// 分頁按鈕
+.pagination {
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px;
+
+    .arrow_button {
+        background-color: transparent; // 移除背景色
+        border: none;
+        width: 30px;
+        height: 30px;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: 12px 8px;
+        cursor: pointer; //滑鼠變樣式
+        border-radius: 50%;
+
+        // 往左按鈕
+        &.prev_button {
+
+
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg width='10' height='6' viewBox='0 0 10 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='rgba(203,203,203,1)' stroke-width='2' fill='none' fill-rule='evenodd'/%3E%3C/svg%3E");
+
+            transform: rotate(90deg);
+            /* 左箭頭需要旋轉180度 */
+        }
+
+        // 往右按鈕
+        &.next_button {
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg width='10' height='6' viewBox='0 0 10 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='rgba(203,203,203,1)' stroke-width='2' fill='none' fill-rule='evenodd'/%3E%3C/svg%3E");
+
+            transform: rotate(270deg);
+        }
+
+        &:disabled {
+            display: none;
+        }
+    }
+
+    // 分頁按鈕數字
+    .page_numbers {
+        display: flex;
+        gap: 15px;
+
+        button {
+            font-family: 'Roboto', sans-serif;
+            background-color: transparent;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 14px;
+            color: rgba(203, 203, 203, 1);
+
+            &.active {
+                background-color: rgba(167, 64, 72, 1);
+                color: white;
+            }
+
+            &:hover:not(.active) {
+                background-color: #f0f0f0;
+            }
+        }
+    }
 }
 </style>
