@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Anti from '../views/AntiView.vue'
 import AllProduct from '../views/AllProductView.vue'
-
+import Product from '../views/ProductView.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -15,6 +15,13 @@ const router = createRouter({
       name: 'all-product',
       component: AllProduct,
     },
+    {
+      path: '/all-product/product/:id',
+      name: 'product',
+      component: Product,
+      props: true,
+    },
+
     // ,
     // {
     //   path: '/about',

@@ -29,7 +29,7 @@
             <div v-for="product in visibleProducts" :key="product.id" class="product_card">
                 <div class="pic">
                     <img :src="product.pic" :alt="product.name" @click.stop="toggleButton(product.id)">
-                    <button v-if="activeProductId === product.id">加入購物車</button>
+                    <button v-if="activeProductId === product.id" @click="goToProduct(product.id)">加入購物車</button>
                 </div>
 
                 <div class="title">
@@ -38,7 +38,7 @@
                 <h3>{{ product.name }}</h3>
                 <p>NT${{ product.price }} </p>
                 <p class="original_price">NT${{ product.originalPrice }}</p>
-                <button>加入購物車</button>
+                <button @click="goToProduct(product.id)">加入購物車</button>
             </div>
         </div>
 
@@ -66,10 +66,14 @@ const isItemOpen = ref(false)// 每頁筆數的下拉式選單是否開啟
 const sortOption = ref('') // 商品排序方式預設由新到舊
 // 假資料
 import { useProductStore } from '@/stores/productStore'
-
 const productStore = useProductStore()
-
 // ------------------function----------------------
+// @頁面跳轉
+import { useRouter } from 'vue-router'
+function goToProduct(productId) {
+    router.push({ name: 'product', params: { id: productId } })
+}
+const router = useRouter()
 // @購物車按鈕顯示邏輯
 const activeProductId = ref(null)// 用來記錄目前哪一個商品的「加入購物車」按鈕正在顯示（透過商品 id 區分）
 
@@ -263,6 +267,7 @@ function goToPage(page) {
             left: 0;
             color: white;
             font-size: 14px;
+            cursor: pointer;
         }
 
         margin-bottom: 20px;
