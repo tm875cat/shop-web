@@ -35,8 +35,8 @@
                 </a></li>
         </ul>
         <div class="member_area">
-            <div class="login"><img src="@/components/icons/member.png" alt="登入">會員登入 </div>
-            <div class="apply"><img src="@/components/icons/apply.png" alt="註冊">新用戶註冊</div>
+            <div class="login" @click="goToLogin()"><img src="@/components/icons/member.png" alt="登入">會員登入 </div>
+            <div class="apply" @click="goToApply()"><img src="@/components/icons/apply.png" alt="註冊">新用戶註冊</div>
         </div>
     </div>
 </template>
@@ -45,6 +45,17 @@ import IconSearch from '@/components/icons/IconSearch.vue'
 import IconOpenSearch from '@/components/icons/IconOpenSearch.vue'
 import IconShop from '@/components/icons/IconShop.vue'
 import { ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+const route = useRoute()
+const router = useRouter()
+//跳到註冊頁面
+function goToLogin() {
+    router.push({ name: 'login' })
+}
+
+function goToApply() {
+    router.push({ name: 'apply' })
+}
 
 // 左側彈出選單
 const isLeftOpen = ref(false)
@@ -266,11 +277,18 @@ header {
             align-items: center;
             margin-top: 10px;
             font-size: 16px;
+            cursor: pointer;
+            width: 45%;
 
             img {
                 margin-right: 10px;
             }
         }
+    }
+
+    // 輸入框區域
+    .apply_input {
+        display: flex;
     }
 
 }

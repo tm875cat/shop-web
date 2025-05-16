@@ -90,6 +90,7 @@
         <!-- 可能感興趣 -->
         <div class="maybe_interest">
             <h1>你可能也有興趣</h1>
+            <div class="line"></div>
         </div>
         <!-- 感興趣商品清單 -->
         <div class="product_list">
@@ -412,7 +413,24 @@ const activeTab = ref('describe')
     // 可能感興趣
     .maybe_interest {
         display: flex;
+        flex-direction: column;
         justify-content: center;
+        align-items: center;
+        margin-bottom: 100px;
+
+        h1 {
+            font-size: 15px;
+            font-weight: bold;
+            font-family: 'Roboto Mono', monospace;
+        }
+
+        .line {
+            margin-top: 20px;
+            width: 154px;
+            height: 3px;
+            background: #EADCDC;
+
+        }
     }
 
     //商品清單
