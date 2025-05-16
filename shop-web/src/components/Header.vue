@@ -137,6 +137,7 @@ header {
             margin-right: 23px;
 
             .icon_search {
+                cursor: pointer;
                 margin-right: 16px;
             }
 

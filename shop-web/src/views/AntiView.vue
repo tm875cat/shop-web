@@ -95,6 +95,7 @@ function goToSlide(index) {
     margin-top: 40px;
 
     .shop_all_buutton {
+        cursor: pointer;
         color: white;
         font-weight: bold;
         width: 130px;

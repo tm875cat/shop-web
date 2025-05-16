@@ -70,10 +70,11 @@ const productStore = useProductStore()
 // ------------------function----------------------
 // @頁面跳轉
 import { useRouter } from 'vue-router'
+const router = useRouter()
 function goToProduct(productId) {
     router.push({ name: 'product', params: { id: productId } })
 }
-const router = useRouter()
+
 // @購物車按鈕顯示邏輯
 const activeProductId = ref(null)// 用來記錄目前哪一個商品的「加入購物車」按鈕正在顯示（透過商品 id 區分）
 
@@ -205,6 +206,7 @@ function goToPage(page) {
     align-items: center;
 
     select {
+        cursor: pointer;
         color: rgba(154, 154, 154, 1); // 字體顏色
         background-color: rgba(245, 245, 245, 1); // 背景顏色
         border: none; // 移除邊框
@@ -304,6 +306,8 @@ function goToPage(page) {
 
     //加入購物車按鈕
     button {
+        cursor: pointer;
+
         font-family: 'Anonymous Pro', monospace;
         color: white;
         font-weight: bold;

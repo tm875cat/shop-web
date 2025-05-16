@@ -65,15 +65,48 @@
             <div class="content">
                 <div v-if="activeTab === 'describe'" class="describe">
                     <!-- 商品描述內容 -->
-                    這裡是商品描述。
+                    <h2>in Korea
+                        <IconKorea /> 韓國連線
+                    </h2>
+
+
+                    <p>韓國選品100％從韓國批市空運來台
+                        （皆來自韓國廠商）</p>
+                    <p>大部分皆為韓國製 made in Korea
+                        少部份商品為「韓國設計&監工 委託中國製造」
+                        我們會盡力做到品質把關及控管
+                        但介意製造地的美眉們請斟酌後再下單唷ᵎᵎᵎ</p>
+
                 </div>
                 <div v-else class="tips">
                     <!-- 購物須知內容 -->
-                    這裡是購物須知。
+                    <h2>預購時間及斷貨情形</h2>
+                    <p>大部分商品皆為預購，商品空運來台，預購日約為7-30個工作天(不含假日)。</p>
+                    <p>若遇廠商延遲發貨（缺貨、斷貨），可能須等候較長時間。</p>
+                    <p>商品無預警斷貨，因訂單數量龐大，將直接幫您取消商品及金額，不再另外告知。</p>
                 </div>
             </div>
         </div>
+        <!-- 可能感興趣 -->
+        <div class="maybe_interest">
+            <h1>你可能也有興趣</h1>
+        </div>
+        <!-- 感興趣商品清單 -->
+        <div class="product_list">
+            <div v-for="product in randomProducts" :key="product.id" class="product_card">
+                <div class="pic">
+                    <img :src="product.pic" :alt="product.name">
+                </div>
 
+                <div class=" title">
+                    <h2>{{ product.no }} {{ product.describe }}</h2>
+                </div>
+                <h3>{{ product.name }}</h3>
+                <p>NT${{ product.price }} </p>
+                <p class="original_price">NT${{ product.originalPrice }}</p>
+                <button @click="goToProduct(product.id)">加入購物車</button>
+            </div>
+        </div>
     </div>
     <div v-else>
         <p>找不到商品</p>
@@ -81,31 +114,86 @@
 
 </template>
 <script setup>
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useProductStore } from '@/stores/productStore'
-import { computed, ref, watchEffect } from 'vue'
+import { computed, ref, watchEffect, watch } from 'vue'
 //Icon引入
 import IconAdd from '@/components/icons/IconAdd.vue'
 import IconMinus from '@/components/icons/IconMinus.vue'
-
+import IconKorea from '@/components/icons/IconKorea.vue'
+// Router & Store
 const route = useRoute()
+const router = useRouter()
 const productStore = useProductStore()
 
 // 從 route.params 拿到 id，並轉成數字
-const productId = Number(route.params.id)
-
+const productId = ref(Number(route.params.id))
+// @載入主頁商品
 // 找到對應的商品
-const product = computed(() =>
-    productStore.products.find(p => p.id === productId)
-)
+// 取得當前商品資料
+const product = computed(() => {
+    return productStore.products.find(p => p.id === productId.value)
+})
 //商品圖片塞入陣列
 const getAllPics = (product) => {
     return [product.pic, product.pic1, product.pic2, product.pic3];
 };
+//@載入感興趣商品
+// 隨機抽出 4 個商品（每次重新載入組件都會重新算）
+const randomProducts = computed(() => {
+    if (!product.value) return []
+
+    // 過濾掉當前商品
+    const filtered = productStore.products.filter(p => p.id !== product.value.id)
+
+    // 洗牌
+    for (let i = filtered.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1))
+            ;[filtered[i], filtered[j]] = [filtered[j], filtered[i]]
+    }
+
+    return filtered.slice(0, 4)
+})
+// @頁面跳轉
+
+// 切換商品時自動更新顏色與尺寸
+const selectedSize = ref('')  // 尺寸 預設空避免報錯
+const selectedColor = ref('')  // 顏色 預設空避免報錯
+const updateSelections = () => {
+    if (product.value?.color?.length) {
+        selectedColor.value = product.value.color[0]
+    }
+    if (product.value?.size?.length) {
+        selectedSize.value = product.value.size[0]
+    }
+}
+// 監聽 route ID 改變時，重新設定商品與選項
+watch(
+    () => route.params.id,
+    (newId) => {
+        productId.value = Number(newId)
+        updateSelections()
+
+        // 選配：滾動回頂部
+        window.scrollTo(0, 0)
+    },
+    { immediate: true } // 頁面初始就執行一次
+)
+
+// 初始載入也要設定一次選項（避免空值）
+watchEffect(() => {
+    if (product.value) {
+        updateSelections()
+    }
+})
+function goToProduct(productId) {
+    router.push({ name: 'product', params: { id: productId } })
+}
 // ------------------------function-----------------------
 // @下拉式選單邏輯
+
 //選擇顏色
-const selectedColor = ref('')  // 顏色 預設空避免報錯
+
 // 使用 watchEffect 監聽 product 的變化
 watchEffect(() => {
     // 確認 product 已經有值且顏色陣列存在且有長度
@@ -119,7 +207,6 @@ watchEffect(() => {
     }
 })
 //選擇尺寸
-const selectedSize = ref('')  // 尺寸 預設空避免報錯
 // 使用 watchEffect 監聽 product 的變化
 watchEffect(() => {
     // 確認 product 已經有值且尺寸陣列存在且有長度
@@ -132,6 +219,7 @@ watchEffect(() => {
         }
     }
 })
+
 //@商品描述及購物提醒切換紐邏輯
 // 控制目前選中的區塊（預設顯示商品描述）
 const activeTab = ref('describe')
@@ -200,6 +288,7 @@ const activeTab = ref('describe')
             margin-bottom: 50px;
 
             select {
+                cursor: pointer;
                 font-size: 12px;
                 color: rgba(154, 154, 154, 1); // 字體顏色
                 background-color: rgba(245, 245, 245, 1); // 背景顏色
@@ -275,6 +364,7 @@ const activeTab = ref('describe')
             justify-content: space-between;
 
             button {
+
                 width: 48%;
                 background: none;
                 border: none;
@@ -301,6 +391,116 @@ const activeTab = ref('describe')
             }
         }
 
+        //商品描述及購物須知內文
+        .content {
+            margin-bottom: 30px;
+            min-height: 200px;
+
+            p {
+                margin-top: 20px;
+            }
+
+            .describe {}
+
+            .tips {}
+
+        }
+
     }
+
+    // 可能感興趣
+    .maybe_interest {
+        display: flex;
+        justify-content: center;
+    }
+
+    //商品清單
+    .product_list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        justify-content: space-between;
+    }
+
+    .product_card {
+        // outline: red solid;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: calc(50% - 4px);
+        /* 兩欄，每欄佔 50%  */
+        box-sizing: border-box;
+        border-radius: 8px;
+        margin-bottom: 20px;
+
+        .pic {
+
+            position: relative;
+
+            img {
+                width: 100%;
+            }
+
+            button {
+                font-family: 'Anonymous Pro', monospace;
+                color: white;
+                font-weight: bold;
+                width: 100%; // 與圖片同寬
+                height: 33px;
+                background-color: rgba(167, 64, 72, 1);
+                border: 0;
+                position: absolute;
+                bottom: 0; // 貼底
+                left: 0;
+                color: white;
+                font-size: 14px;
+                cursor: pointer;
+            }
+
+            margin-bottom: 20px;
+        }
+
+
+        // 標題ex:A01 本期推薦
+        .title {
+            margin-bottom: 15px;
+
+            h2 {
+                font-family: 'Tenor Sans', sans-serif;
+            }
+        }
+
+        // 品名
+        h3 {
+            font-weight: bold;
+            font-family: 'Anonymous Pro', monospace;
+            margin-bottom: 15px;
+        }
+
+        //價格
+        p {
+            font-family: 'Tenor Sans', sans-serif;
+            margin-bottom: 5px;
+        }
+
+        // 原價
+        .original_price {
+            text-decoration: line-through; //劃掉
+            color: rgba(203, 203, 203, 1);
+        }
+
+        //加入購物車按鈕
+        button {
+            cursor: pointer;
+            font-family: 'Anonymous Pro', monospace;
+            color: white;
+            font-weight: bold;
+            width: 130px;
+            height: 33px;
+            background-color: rgba(167, 64, 72, 1);
+            border: 0;
+        }
+    }
+
 }
 </style>
