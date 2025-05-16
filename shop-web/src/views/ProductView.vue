@@ -395,14 +395,15 @@ const activeTab = ref('describe')
         .content {
             margin-bottom: 30px;
             min-height: 200px;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 12px;
 
             p {
+
+
                 margin-top: 20px;
             }
 
-            .describe {}
-
-            .tips {}
 
         }
 
