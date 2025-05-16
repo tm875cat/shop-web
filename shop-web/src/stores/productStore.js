@@ -5,7 +5,7 @@ import { defineStore } from 'pinia'
 import product1 from '@/assets/product/product_1.png'
 import product2 from '@/assets/product/product_2.png'
 import product3 from '@/assets/product/product_3.png'
-
+// 商品資料
 export const useProductStore = defineStore('productStore', () => {
   const products = ref([
     {
