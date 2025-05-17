@@ -33,7 +33,7 @@ export const useUserDataStore = defineStore('userDataStore', () => {
     const saved = JSON.parse(localStorage.getItem('userData'))
     // 如果 localStorage 裡有資料，就加入 users
     if (Array.isArray(saved)) {
-      users.value.push(...saved)
+       users.value = saved
     }
   }
 

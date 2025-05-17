@@ -3,62 +3,70 @@
     <!-- 歡迎 -->
     <div class="welcome">
       <h1>註冊會員</h1>
-      <p>快完成了</p>
+      <p v-if="!applyFinish">快完成了</p>
     </div>
-    <!-- 輸入框區域 -->
-    <div class="apply_input">
-      <input
-        type="text"
-        v-model="inputName"
-        :placeholder="inputNamePlaceholder"
-        @click="resetNameError()"
-        :class="{ error: inputNameError }"
-      />
-      <input
-        type="text"
-        v-model="inputEmail"
-        :placeholder="inputEmailPlaceholder"
-        @input="inputEmail = filterEnglishSymbols($event.target.value)"
-        @click="resetEmailError()"
-        :class="{ error: inputEmailError }"
-      />
-      <input
-        type="text"
-        v-model="inputPsw"
-        :placeholder="inputPswPlaceholder"
-        @input="inputPsw = filterEnglishSymbols($event.target.value)"
-        @click="resetPswError()"
-        :class="{ error: inputPswError }"
-      />
+    <div class="main_page" v-if="!applyFinish">
+      <!-- 輸入框區域 -->
+      <div class="apply_input">
+        <input
+          type="text"
+          v-model="inputName"
+          :placeholder="inputNamePlaceholder"
+          @click="resetNameError()"
+          :class="{ error: inputNameError }"
+        />
+        <input
+          type="text"
+          v-model="inputEmail"
+          :placeholder="inputEmailPlaceholder"
+          @input="inputEmail = filterEnglishSymbols($event.target.value)"
+          @click="resetEmailError()"
+          :class="{ error: inputEmailError }"
+        />
+        <input
+          type="text"
+          v-model="inputPsw"
+          :placeholder="inputPswPlaceholder"
+          @input="inputPsw = filterEnglishSymbols($event.target.value)"
+          @click="resetPswError()"
+          :class="{ error: inputPswError }"
+        />
+      </div>
+      <!-- 同意條款 -->
+      <div class="argee_input">
+        <div class="argee_check">
+          <CustomCheckbox v-model="agreeNews" />
+          <p>我願意接收品牌的最新優惠消息和服務推廣相關資訊</p>
+        </div>
+        <div class="argee_check">
+          <CustomCheckbox v-model="agreeTerms" />
+          <p>我同意網站<span>服務條款</span>和<span>隱私權政策</span></p>
+        </div>
+        <button @click="apply()">即將完成</button>
+      </div>
+      <!-- 註冊區域 -->
+      <div class="to_login">
+        <h2>已註冊會員?</h2>
+        <button>登入</button>
+      </div>
     </div>
-    <!-- 同意條款 -->
-    <div class="argee_input">
-      <label>
-        <CustomCheckbox v-model="agreeNews" />
-        <p>我願意接收 品牌 的最新優惠消息和服務推廣相關資訊</p>
-      </label>
-      <label>
-        <CustomCheckbox v-model="agreeTerms" />
-        <p>我同意網站 <span>服務條款</span>和 <span>隱私權政策</span></p>
-      </label>
-      <button @click="apply()">即將完成</button>
-    </div>
-
-    <!-- 註冊區域 -->
-    <div class="to_login">
-      <h2>已註冊會員?</h2>
-      <button>登入</button>
+    <!-- 註冊完成畫面 -->
+    <div class="main_page_finish" v-else>
+      <img src="@/components/icons/member.png" alt="用戶頭貼" />
+      <p>{{ userName }} 您好, 歡迎加入</p>
+      <button>回到購物車</button>
     </div>
   </div>
 </template>
 <script setup>
 import { ref } from 'vue'
 import CustomCheckbox from '@/components/CustomCheckbox.vue' //自訂勾選框
-import { useUserDataStore } from '@/stores/userDataStore' //現有會員資料
+import { useUserDataStore } from '@/stores/userDataStore' //現有所有會員資料
+import { userStore } from '@/stores/userStore' //現有會員資料
 import { onMounted } from 'vue'
 // 載入之前註冊的會員資料
 onMounted(() => {
-  store.loadFromStorage()
+  allUsersStore.loadFromStorage()
 })
 // @@註冊邏輯
 const inputName = ref('') //用戶名
@@ -70,16 +78,16 @@ const inputEmailError = ref(false) //電子信箱error顯示
 const inputPsw = ref('') //密碼
 const inputPswPlaceholder = ref('密碼') //密碼Placeholder
 const inputPswError = ref(false) //密碼error顯示
-
 const agreeTerms = ref(false) //同意條款
 const agreeNews = ref(false) //同意最新消息
+const userName = ref('') //目前登入的用戶名
 //限定只能打英文數字及符號
 const filterEnglishSymbols = (value) => {
   return value.replace(/[^\x00-\x7F]/g, '')
 }
 
-const store = useUserDataStore() //現有會員資料
-
+const allUsersStore = useUserDataStore() //現有全部會員資料
+const currentUserStore = userStore() //現在登入的會員
 //@註冊
 const apply = () => {
   if (
@@ -90,8 +98,8 @@ const apply = () => {
   ) {
     return
   }
-  if(!agreeTerms.value){
-    alert("請勾選同意服務條款")
+  if (!agreeTerms.value) {
+    alert('請勾選同意服務條款')
     return
   }
   // 建立新會員
@@ -104,17 +112,18 @@ const apply = () => {
   }
 
   // 存入 Store
-  store.users.push(newUser)
-
+  allUsersStore.users.push(newUser)
+  // 自動登入：設定到當前使用者 Store
+  currentUserStore.user = { ...newUser }
   // 清空表單
   resetForm()
-
-  alert('註冊成功！')
+  userName.value=newUser.username
+  applyFinish.value = true
 }
-// test@example.com
+// @欄位驗證
 // 檢查信箱是否已存在
 const isEmailDuplicate = (email) => {
-  const exists = store.users.some((user) => user.email === email)
+  const exists = allUsersStore.users.some((user) => user.email === email)
   if (exists) {
     inputEmail.value = ''
     inputEmailPlaceholder.value = '此信箱已經註冊過，請使用其他信箱。'
@@ -123,8 +132,8 @@ const isEmailDuplicate = (email) => {
       inputEmailPlaceholder.value = '電子信箱'
       inputEmailError.value = false
     }, 2000)
-    console.log('此信箱已經註冊過，請使用其他信箱。');
-    
+    console.log('此信箱已經註冊過，請使用其他信箱。')
+
     return true
   }
   return false
@@ -133,14 +142,14 @@ const isEmailDuplicate = (email) => {
 const isEmailFormatValid = (email) => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
   if (!emailRegex.test(email)) {
-     inputEmail.value = ''
+    inputEmail.value = ''
     inputEmailPlaceholder.value = '請輸入正確格式的電子信箱'
     inputEmailError.value = true
     setTimeout(() => {
       inputEmailPlaceholder.value = '電子信箱'
       inputEmailError.value = false
     }, 2000)
-    console.log("請輸入正確格式的電子信箱");
+    console.log('請輸入正確格式的電子信箱')
     return true
   }
   return false
@@ -159,11 +168,11 @@ const isUsernameInvalid = (name) => {
       inputNamePlaceholder.value = '用戶名'
       inputNameError.value = false
     }, 2000)
-    console.log("用戶名不可為空");
-    
+    console.log('用戶名不可為空')
+
     return true
   }
-  const duplicate = store.users.some((user) => user.username === name)
+  const duplicate = allUsersStore.users.some((user) => user.username === name)
   if (duplicate) {
     inputName.value = ''
     inputNamePlaceholder.value = '用戶名已被使用!!'
@@ -172,7 +181,7 @@ const isUsernameInvalid = (name) => {
       inputNamePlaceholder.value = '用戶名'
       inputNameError.value = false
     }, 2000)
-    console.log("用戶名已被使用");
+    console.log('用戶名已被使用')
     return true
   }
   return false
@@ -191,8 +200,8 @@ const isPasswordValid = (password) => {
       inputPswPlaceholder.value = '密碼'
       inputPswError.value = false
     }, 2000)
-    console.log('密碼長度需至少8位數');
-    
+    console.log('密碼長度需至少8位數')
+
     return true
   }
   return false
@@ -210,9 +219,12 @@ const resetForm = () => {
   agreeTerms.value = false
   agreeNews.value = false
 }
+
+const applyFinish = ref(false) //是否已經註冊完成
 </script>
 <style lang="scss">
 .apply_page {
+  padding: 0 20px;
   // 歡迎
   .welcome {
     margin-top: 120px;
@@ -279,12 +291,13 @@ const resetForm = () => {
     flex-direction: column;
     font-family: 'Roboto Mono', monospace;
     font-size: 15px;
-    label {
+    .argee_check {
       width: 100%;
       display: flex;
       align-items: center;
       color: #9a9a9a;
       p {
+        letter-spacing: 1px;
         margin-left: 10px;
         span {
           font-weight: bold;
@@ -329,6 +342,28 @@ const resetForm = () => {
       cursor: pointer;
       letter-spacing: 2px;
     }
+  }
+}
+// 註冊完成畫面
+.main_page_finish {
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+  img {
+    min-width: 250px;
+  }
+  button {
+    cursor: pointer;
+    margin-top: 20px;
+    width: 100%;
+    min-height: 40px;
+    background-color: #a74048;
+    color: white;
+    border: none;
+    font-family: 'Roboto Mono', monospace;
+    font-weight: bold;
+    letter-spacing: 2px;
   }
 }
 </style>

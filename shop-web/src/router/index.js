@@ -4,6 +4,7 @@ import AllProduct from '../views/AllProductView.vue'
 import Product from '../views/ProductView.vue'
 import Login from '../views/LoginView.vue'
 import Apply from '../views/ApplyView.vue'
+import Checkout from '../views/CheckoutView.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -32,6 +33,11 @@ const router = createRouter({
       path: '/apply',
       name: 'apply',
       component: Apply,
+    },
+       {
+      path: '/checkout',
+      name: 'checkout',
+      component: Checkout,
     },
   ],
 })
