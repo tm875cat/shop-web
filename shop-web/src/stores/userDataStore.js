@@ -4,29 +4,28 @@ import { defineStore } from 'pinia'
 import product1 from '@/assets/product/product_1.png'
 import product2 from '@/assets/product/product_2.png'
 import product3 from '@/assets/product/product_3.png'
-// 建立一個新的 Pinia store，名稱為 'userDataStore'
+// 全部會員的資料
 export const useUserDataStore = defineStore('userDataStore', () => {
-  // users 是一個會員資料陣列，預設包含一筆假帳號
   const users = ref([
-    {
-      username: '測試用戶',
-      email: 'test@example.com',
-      password: '123456',
-      pic: '',
-      shopcar: [
-        {
-          pic: product1,
-          no: 'A01',
-          describe: '本期推薦',
-          name: '復古立領外套',
-          price: 180,
-          originalPrice: 3000,
-          color: '黑',
-          size: 'S',
-          quantity: 1,
-        },
-      ],
-    },
+    // {
+    //   username: '測試用戶',
+    //   email: 'test@example.com',
+    //   password: '123456',
+    //   pic: '',
+    //   shopcar: [
+    //     {
+    //       pic: product1,
+    //       no: 'A01',
+    //       describe: '本期推薦',
+    //       name: '復古立領外套',
+    //       price: 180,
+    //       originalPrice: 3000,
+    //       color: '黑',
+    //       size: 'S',
+    //       quantity: 1,
+    //     },
+    //   ],
+    // },
   ])
 
   // 從 localStorage 載入之前儲存的會員資料

@@ -3,7 +3,6 @@
         <!-- 主要圖片 -->
         <div class="main_pic">
             <img :src="product.pic1" :alt="product.name" />
-
         </div>
         <!-- 其他圖片清單 -->
         <div class="pic_list">
