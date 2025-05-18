@@ -62,7 +62,7 @@
 import { ref } from 'vue'
 import CustomCheckbox from '@/components/CustomCheckbox.vue' //自訂勾選框
 import { useUserDataStore } from '@/stores/userDataStore' //現有所有會員資料
-import { userStore } from '@/stores/userStore' //現有會員資料
+import { userStore } from '@/stores/userStore' //現在登入的會員資料
 import { onMounted } from 'vue'
 // 載入之前註冊的會員資料
 onMounted(() => {
