@@ -36,7 +36,17 @@ export const userStore = defineStore('userStore', () => {
       }
     }
   }
-
+  //  登出：清空使用者資料 + localStorage
+  const logout = () => {
+    user.value = {
+      username: '',
+      email: '',
+      password: '',
+      pic: '',
+      shopCar: [],
+    }
+    localStorage.removeItem('userStore')
+  }
   // 自動同步到 localStorage
   watch(
     user,
@@ -49,5 +59,6 @@ export const userStore = defineStore('userStore', () => {
   return {
     user,
     loadFromStorage,
+    logout,
   }
 })
