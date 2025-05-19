@@ -1,21 +1,21 @@
 <template>
+    <div class="home_page">
+        <!-- 商品圖區域 -->
+        <div class="product_area">
+            <Swiper :modules="[Pagination, Autoplay]" :pagination="{ clickable: true }" :loop="true"
+                :autoplay="{ delay: 3000 }" class="mySwiper">
+                <SwiperSlide v-for="(image, index) in images" :key="index">
+                    <img :src="image" alt="產品圖片" />
+                </SwiperSlide>
+            </Swiper>
+        </div>
+        <!-- 全部商品按鈕 -->
+        <div class="shop_all_area">
+            <RouterLink to="/all-product"> <button class="shop_all_buutton">SHOP ALL</button></RouterLink>
+        </div>
+        <Footer />
 
-    <!-- 商品圖區域 -->
-    <div class="product_area">
-        <Swiper :modules="[Pagination, Autoplay]" :pagination="{ clickable: true }" :loop="true"
-            :autoplay="{ delay: 3000 }" class="mySwiper">
-            <SwiperSlide v-for="(image, index) in images" :key="index">
-                <img :src="image" alt="產品圖片" />
-            </SwiperSlide>
-        </Swiper>
     </div>
-    <!-- 全部商品按鈕 -->
-    <div class="shop_all_area">
-        <RouterLink to="/all-product"> <button class="shop_all_buutton">SHOP ALL</button></RouterLink>
-
-
-    </div>
-    <Footer />
 
 </template>
 <script setup>
@@ -46,64 +46,49 @@ function goToSlide(index) {
 </script>
 
 <style lang="scss" scoped>
-.dropdown {
-    position: absolute;
-    top: 30px;
-    left: 0;
-    background: white;
-    border: 1px solid #ccc;
-    list-style: none;
-    padding: 10px;
-    z-index: 1000;
+.home_page {
+    padding: 0 20px;
 
-    li {
-        margin: 5px 0;
-    }
-
-    a {
-        text-decoration: none;
-        color: #333;
-    }
-}
-
-// 商品圖區域
-.product_area {
-    margin-top: 40px;
-    width: 100%;
-    background-color: rgba(167, 64, 72, 1);
-    height: 464px;
-    position: relative;
-
-    .mySwiper {
-        max-width: 600px;
-        height: 100%;
-    }
-
-    .mySwiper img {
+    // 商品圖區域
+    .product_area {
+        margin-top: 40px;
         width: 100%;
-        height: 100%;
-        object-fit: cover;
-        border-radius: 10px;
-    }
-
-}
-
-// SHOP ALL按鈕區域
-.shop_all_area {
-    display: flex;
-    justify-content: center;
-    margin-top: 40px;
-
-    .shop_all_buutton {
-        cursor: pointer;
-        color: white;
-        font-weight: bold;
-        width: 130px;
-        height: 33px;
         background-color: rgba(167, 64, 72, 1);
-        border: 0;
-        font-size: 14px;
-        font-family: 'Roboto', sans-serif;
+        height: 464px;
+        position: relative;
+
+        .mySwiper {
+            max-width: 600px;
+            height: 100%;
+        }
+
+        .mySwiper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
     }
+
+    // SHOP ALL按鈕區域
+    .shop_all_area {
+        display: flex;
+        justify-content: center;
+        margin-top: 40px;
+
+        .shop_all_buutton {
+            cursor: pointer;
+            color: white;
+            font-weight: bold;
+            width: 130px;
+            height: 33px;
+            background-color: rgba(167, 64, 72, 1);
+            border: 0;
+            font-size: 14px;
+            font-family: 'Roboto', sans-serif;
+        }
+    }
+
 }
 </style>

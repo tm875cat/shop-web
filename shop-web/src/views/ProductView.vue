@@ -1,29 +1,29 @@
 <template>
-    <div class="product_page" v-if="product">
+    <div class="product_page" v-if="pageProduct">
         <!-- 主要圖片 -->
         <div class="main_pic">
-            <img :src="product.pic1" :alt="product.name" />
+            <img :src="pageProduct.pic1" :alt="pageProduct.name" />
         </div>
         <!-- 其他圖片清單 -->
         <div class="pic_list">
-            <img v-for="(img, index) in getAllPics(product)" :key="index" :src="img"
-                :alt="product.name + ' 圖片' + (index + 1)" />
+            <img v-for="(img, index) in getAllPics(pageProduct)" :key="index" :src="img"
+                :alt="pageProduct.name + ' 圖片' + (index + 1)" />
         </div>
         <!-- 商品資訊 -->
         <div class="product_info">
             <div class="title">
-                <h2>{{ product.no }}</h2>
-                <h2>{{ product.describe + product.name }}</h2>
+                <h2>{{ pageProduct.no }}</h2>
+                <h2>{{ pageProduct.describe + pageProduct.name }}</h2>
             </div>
             <div class="price">
-                <p>NT${{ product.price }}</p>
+                <p>NT${{ pageProduct.price }}</p>
             </div>
             <!-- 下拉式選單 -->
             <div class="select_bar">
                 <div class="color_bar">
                     <h3>顏色</h3>
                     <select v-model="selectedColor">
-                        <option v-for="(color, index) in product.color" :key="index" :value="color">
+                        <option v-for="(color, index) in pageProduct.color" :key="index" :value="color">
                             {{ color }}
                         </option>
                     </select>
@@ -31,7 +31,7 @@
                 <div class="size_bar">
                     <h3>尺寸</h3>
                     <select v-model="selectedSize">
-                        <option v-for="(size, index) in product.size" :key="index" :value="size">
+                        <option v-for="(size, index) in pageProduct.size" :key="index" :value="size">
                             {{ size }}
                         </option>
                     </select>
@@ -40,11 +40,17 @@
             </div>
             <!-- 商品數量選擇 -->
             <div class="count_select">
-                <IconMinus />
-                <p>1</p>
-                <IconAdd />
+
+                <button @click="updateSelectedQuantity(-1)">
+                    <IconMinus />
+                </button>
+                <p>{{ selectedQuantity }}</p>
+                <button>
+                    <IconAdd @click="updateSelectedQuantity(1)" />
+                </button>
+
             </div>
-            <button class="shop_car">加入購物車</button>
+            <button class="shop_car" @click="joinShopCar()">加入購物車</button>
 
 
         </div>
@@ -116,7 +122,7 @@
 <script setup>
 import { useRoute, useRouter } from 'vue-router'
 import { useProductStore } from '@/stores/productStore'
-import { computed, ref, watchEffect, watch } from 'vue'
+import { computed, ref, watchEffect, watch, onMounted } from 'vue'
 //Icon引入
 import IconAdd from '@/components/icons/IconAdd.vue'
 import IconMinus from '@/components/icons/IconMinus.vue'
@@ -124,27 +130,53 @@ import IconKorea from '@/components/icons/IconKorea.vue'
 // Router & Store
 const route = useRoute()
 const router = useRouter()
-const productStore = useProductStore()
+const productStore = useProductStore()//所有商品
+import { userStore } from '@/stores/userStore' //現在登入的會員資料
+const currentUserStore = userStore() //目前登入會員
+
 
 // 從 route.params 拿到 id，並轉成數字
 const productId = ref(Number(route.params.id))
 // @載入主頁商品
 // 找到對應的商品
 // 取得當前商品資料
-const product = computed(() => {
+const pageProduct = computed(() => {
     return productStore.products.find(p => p.id === productId.value)
 })
 //商品圖片塞入陣列
 const getAllPics = (product) => {
     return [product.pic, product.pic1, product.pic2, product.pic3];
 };
+//加入購物車
+function joinShopCar() {
+    //要登入才能加入購物車
+    if (currentUserStore.user.email == '') {
+        alert("請先登入")
+        router.push({ name: 'login' })
+        return
+    }
+    let product = {
+        pic: pageProduct.value.pic,
+        no: pageProduct.value.no,
+        describe: pageProduct.value.describe,
+        name: pageProduct.value.name,
+        price: pageProduct.value.price,
+        originalPrice: pageProduct.value.originalPrice,
+        color: selectedColor.value,
+        size: selectedSize.value,
+        quantity: selectedQuantity.value,
+    }
+    alert('新增成功')
+
+
+}
 //@載入感興趣商品
 // 隨機抽出 4 個商品（每次重新載入組件都會重新算）
 const randomProducts = computed(() => {
-    if (!product.value) return []
+    if (!pageProduct.value) return []
 
     // 過濾掉當前商品
-    const filtered = productStore.products.filter(p => p.id !== product.value.id)
+    const filtered = productStore.products.filter(p => p.id !== pageProduct.value.id)
 
     // 洗牌
     for (let i = filtered.length - 1; i > 0; i--) {
@@ -155,17 +187,26 @@ const randomProducts = computed(() => {
     return filtered.slice(0, 4)
 })
 // @頁面跳轉
-
 // 切換商品時自動更新顏色與尺寸
 const selectedSize = ref('')  // 尺寸 預設空避免報錯
 const selectedColor = ref('')  // 顏色 預設空避免報錯
+const selectedQuantity = ref(1)  // 商品數量
+// 更新商品數量
+function updateSelectedQuantity(num) {
+    //商品數量不可低於0
+    if (selectedQuantity.value == 0 && num < 1) {
+        return
+    }
+    selectedQuantity.value += num
+}
 const updateSelections = () => {
-    if (product.value?.color?.length) {
-        selectedColor.value = product.value.color[0]
+    if (pageProduct.value?.color?.length) {
+        selectedColor.value = pageProduct.value.color[0]
     }
-    if (product.value?.size?.length) {
-        selectedSize.value = product.value.size[0]
+    if (pageProduct.value?.size?.length) {
+        selectedSize.value = pageProduct.value.size[0]
     }
+    selectedQuantity.value = 1
 }
 // 監聽 route ID 改變時，重新設定商品與選項
 watch(
@@ -182,7 +223,7 @@ watch(
 
 // 初始載入也要設定一次選項（避免空值）
 watchEffect(() => {
-    if (product.value) {
+    if (pageProduct.value) {
         updateSelections()
     }
 })
@@ -197,12 +238,12 @@ function goToProduct(productId) {
 // 使用 watchEffect 監聽 product 的變化
 watchEffect(() => {
     // 確認 product 已經有值且顏色陣列存在且有長度
-    if (product.value && product.value.color && product.value.color.length > 0) {
+    if (pageProduct.value && pageProduct.value.color && pageProduct.value.color.length > 0) {
         // 只有當 selectedColor 還沒設定值時，才將它設成第一個顏色
-        selectedColor.value = selectedColor.value || product.value.color[0]
+        selectedColor.value = selectedColor.value || pageProduct.value.color[0]
         //如果還沒設定過預設值，設為第一個顏色
         if (!selectedColor.value) {
-            selectedColor.value = product.value.color[0]
+            selectedColor.value = pageProduct.value.color[0]
         }
     }
 })
@@ -210,12 +251,12 @@ watchEffect(() => {
 // 使用 watchEffect 監聽 product 的變化
 watchEffect(() => {
     // 確認 product 已經有值且尺寸陣列存在且有長度
-    if (product.value && product.value.size && product.value.size.length > 0) {
+    if (pageProduct.value && pageProduct.value.size && pageProduct.value.size.length > 0) {
         // 只有當 selectedSize 還沒設定值時，才將它設成第一個尺寸
-        selectedSize.value = selectedSize.value || product.value.size[0]
+        selectedSize.value = selectedSize.value || pageProduct.value.size[0]
         //如果還沒設定過預設值，設為第一個尺寸
         if (!selectedSize.value) {
-            selectedSize.value = product.value.size[0]
+            selectedSize.value = pageProduct.value.size[0]
         }
     }
 })
@@ -331,6 +372,15 @@ const activeTab = ref('describe')
             justify-content: center;
             align-items: center;
             gap: 35px;
+
+            button {
+                all: unset; // 清除瀏覽器預設樣式
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                height: 20px; //加點高度避免太難點
+            }
 
             p {
                 font-family: 'Roboto Mono', monospace;

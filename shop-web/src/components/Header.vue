@@ -10,7 +10,7 @@
             <img src="@/assets/logo.png" alt="Logo" class="logo" />
             <div class="right_icon">
                 <IconSearch @click="toggleSearch" class="icon_search" />
-                <IconShop @click="goToCheckout" class="icon_shop" />
+                <IconShop @click="toggleShopCarMenu" class="icon_shop" />
             </div>
         </div>
 
@@ -20,9 +20,8 @@
             <input type="text" placeholder="  找商品" />
         </div>
     </header>
-    <div class="search-overlay" v-if="isSearchOpen" @click="toggleSearch"></div>
     <!--左遮罩(用來關閉選單) -->
-    <div class="left_overlay" v-if="isLeftOpen" @click="toggleLeftMenu"></div>
+    <div class="left_overlay" v-if="isLeftOpen || isShopCarOpen || isSearchOpen" @click="closeMenu"></div>
     <!-- 左側選單 -->
     <div class="left_side_menu" :class="{ left_open: isLeftOpen }">
         <ul>
@@ -49,6 +48,17 @@
             </div>
         </div>
     </div>
+    <!-- 購物車側邊攔 -->
+    <div class="shopcar_menu" :class="{ shopcar_open: isShopCarOpen }">
+        <ul>
+            <li><a href="#">購物車</a></li>
+            <li><a href="#">購物車</a></li>
+            <li><a href="#">購物車</a></li>
+            <li><a href="#">購物車</a></li>
+            <li><a href="#">購物車</a></li>
+            <li><a href="#">購物車 US / 購物車 </a></li>
+        </ul>
+    </div>
 </template>
 <script setup>
 import IconSearch from '@/components/icons/IconSearch.vue'
@@ -61,6 +71,7 @@ const currentUserStore = userStore() //目前登入會員
 const route = useRoute()
 const router = useRouter()
 const isLeftOpen = ref(false)// 左側彈出選單彈出狀態
+const isShopCarOpen = ref(false)// 購物車選單彈出狀態
 const isSearchOpen = ref(false)//上方搜尋框彈出狀態
 // 根據 user 裡的 email 是否存在判斷是否登入
 const isLogin = computed(() => currentUserStore.user.email !== '')
@@ -82,8 +93,19 @@ function goToApply() {
 function goToCheckout() {
     router.push({ name: 'checkout' })
 }
+// 購物車選單彈出選單
+function toggleShopCarMenu() {
 
 
+    isShopCarOpen.value = !isShopCarOpen.value
+    console.log(isShopCarOpen.value);
+}
+//遮罩關閉選單
+function closeMenu() {
+    isLeftOpen.value = false
+    isShopCarOpen.value = false
+    isSearchOpen.value = false
+}
 
 // 左側彈出選單
 function toggleLeftMenu() {
@@ -196,7 +218,8 @@ header {
 
     //點擊後的搜尋框區域
     .search_content {
-        top: 0;
+        position: fixed;
+        top: 50px;
         left: 0;
         width: 100%;
         height: 60px;
@@ -229,30 +252,9 @@ header {
     }
 }
 
-// 搜尋框遮罩
-.search-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(134, 134, 134, 0.41);
-    z-index: 900;
-}
-
-// 左遮罩(用來關閉選單)
-.left_overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(134, 134, 134, 0.41);
-    z-index: 900;
-}
-
 // 左邊選單
 .left_side_menu {
+
     display: flex;
     flex-direction: column;
     position: fixed;
@@ -309,10 +311,77 @@ header {
             margin-bottom: 40px;
         }
     }
+}
 
-    // 輸入框區域
-    .apply_input {
-        display: flex;
+// 左遮罩(用來關閉選單)
+.left_overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(134, 134, 134, 0.41);
+    z-index: 900;
+}
+
+//購物車選單
+.shopcar_menu {
+
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    left: -400px;
+    width: 400px;
+    height: 100vh;
+    background: #fdfdfd;
+    color: rgb(0, 0, 0);
+    transition: left 0.5s ease;
+    z-index: 1000;
+
+    &.shopcar_open {
+        left: 0;
+    }
+
+    ul {
+        margin-top: 100px;
+        list-style: none;
+        padding: 0;
+
+        li {
+            margin: 20px 50px;
+
+            // a {
+            //     color: rgb(0, 0, 0);
+            //     text-decoration: none;
+            //     font-size: 18px;
+            // }
+        }
+    }
+
+    // 會員區域
+    .member_area {
+        margin-top: auto;
+        padding: 40px 40px;
+
+        .user_field {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 45%;
+
+            img {
+                width: 45px;
+                height: 45px;
+                margin-right: 10px;
+            }
+        }
+
+        .is_login {
+            margin-bottom: 40px;
+        }
     }
 }
 </style>
