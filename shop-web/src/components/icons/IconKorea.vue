@@ -1,7 +1,5 @@
 <template>
-
-
-
+    <!-- 韓國國旗icon -->
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 480" style="height: 1em; vertical-align: middle;">
         <defs>
             <clipPath id="a">

@@ -7,7 +7,7 @@
                 <span :class="{ left_open: isLeftOpen }"></span>
                 <span :class="{ left_open: isLeftOpen }"></span>
             </div>
-            <img src="@/assets/logo.png" alt="Logo" class="logo" />
+            <img src="@/assets/logo.png" alt="Logo" class="logo" @click="goToHome" />
             <div class="right_icon">
                 <IconSearch @click="toggleSearch" class="icon_search" />
                 <IconShop @click="toggleShopCarMenu" class="icon_shop" />
@@ -20,7 +20,7 @@
             <input type="text" placeholder="  找商品" />
         </div>
     </header>
-    <!--左遮罩(用來關閉選單) -->
+    <!--遮罩(用來關閉選單) -->
     <div class="left_overlay" v-if="isLeftOpen || isShopCarOpen || isSearchOpen" @click="closeMenu"></div>
     <!-- 左側選單 -->
     <div class="left_side_menu" :class="{ left_open: isLeftOpen }">
@@ -51,13 +51,17 @@
     <!-- 購物車側邊攔 -->
     <div class="shopcar_menu" :class="{ shopcar_open: isShopCarOpen }">
         <ul>
-            <li><a href="#">購物車</a></li>
-            <li><a href="#">購物車</a></li>
-            <li><a href="#">購物車</a></li>
-            <li><a href="#">購物車</a></li>
-            <li><a href="#">購物車</a></li>
-            <li><a href="#">購物車 US / 購物車 </a></li>
+            <li v-for="product in userShopCar">
+                <img :src="product.pic" alt="商品圖">
+                <div class="product_info">
+                    <h3>{{ product.no }} {{ product.describe }}{{ product.name }}</h3>
+                    <p><span>{{ product.color }}</span> </p>
+                    <p>{{ product.quantity }} x NT{{ product.price }}</p>
+                </div>
+            </li>
+
         </ul>
+        <button @click="goToCheckout()">訂單結帳</button>
     </div>
 </template>
 <script setup>
@@ -73,13 +77,17 @@ const router = useRouter()
 const isLeftOpen = ref(false)// 左側彈出選單彈出狀態
 const isShopCarOpen = ref(false)// 購物車選單彈出狀態
 const isSearchOpen = ref(false)//上方搜尋框彈出狀態
-// 根據 user 裡的 email 是否存在判斷是否登入
-const isLogin = computed(() => currentUserStore.user.email !== '')
+const isLogin = computed(() => currentUserStore.user.email !== '')// 根據 user 裡的 email 是否存在判斷是否登入
+const userShopCar = computed(() => currentUserStore.user.shopCar)//載入user的購物車
 //登出
 function signout() {
     isLeftOpen.value = false
     router.push({ name: 'anti' })
     currentUserStore.logout()
+}
+//回首頁
+function goToHome() {
+    router.push({ name: 'anti' })
 }
 //跳到登入頁面
 function goToLogin() {
@@ -185,6 +193,7 @@ header {
         }
 
         .logo {
+            cursor: pointer;
             width: 121px;
             height: 20px;
             position: relative;
@@ -326,9 +335,9 @@ header {
 
 //購物車選單
 .shopcar_menu {
-
     display: flex;
     flex-direction: column;
+    align-items: center;
     position: fixed;
     top: 0;
     left: -400px;
@@ -344,44 +353,57 @@ header {
     }
 
     ul {
-        margin-top: 100px;
+        width: 100%;
+        margin-top: 40px;
         list-style: none;
-        padding: 0;
+        flex: 0.9; //  讓 ul 撐滿中間空間（可滾動區）
+        overflow-y: auto; //  超出時出現垂直卷軸
 
         li {
-            margin: 20px 50px;
 
-            // a {
-            //     color: rgb(0, 0, 0);
-            //     text-decoration: none;
-            //     font-size: 18px;
-            // }
+            display: flex;
+            margin-top: 25px;
+            justify-content: center;
+            align-items: center;
+
+            img {
+                width: 77px;
+                height: 77px;
+                object-fit: cover; //  保持比例，裁切多餘部分
+            }
+
+            .product_info {
+                margin-left: 15px;
+                font-family: 'Roboto Mono', monospace;
+                font-size: 14px;
+
+                h3 {}
+
+                p {
+                    margin-top: 3px;
+
+                    span {
+                        font-weight: bold;
+                    }
+                }
+            }
         }
     }
 
     // 會員區域
-    .member_area {
+    button {
         margin-top: auto;
-        padding: 40px 40px;
-
-        .user_field {
-            display: flex;
-            align-items: center;
-            margin-top: 10px;
-            font-size: 16px;
-            cursor: pointer;
-            width: 45%;
-
-            img {
-                width: 45px;
-                height: 45px;
-                margin-right: 10px;
-            }
-        }
-
-        .is_login {
-            margin-bottom: 40px;
-        }
+        margin-bottom: 30px;
+        width: 255px;
+        height: 79px;
+        border: none;
+        cursor: pointer;
+        font-family: 'Anonymous Pro', monospace;
+        font-size: 20px;
+        font-weight: bold;
+        color: white;
+        background-color: rgba(167, 64, 72, 1);
+        border: 0;
     }
 }
 </style>

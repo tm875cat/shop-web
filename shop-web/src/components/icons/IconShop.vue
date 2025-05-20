@@ -1,4 +1,5 @@
 <template>
+    <!-- 購物車圖案 -->
     <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M20.8464 7.0407L21.5525 23.6053L3.57248 23.4857L4.49908 6.93189L20.8464 7.0407Z" stroke="#14142B" />
         <path

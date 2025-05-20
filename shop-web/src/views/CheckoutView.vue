@@ -6,11 +6,9 @@
     <div class="shop_car">
       <h2>購物車</h2>
       <div class="shop_car_box">
-        <div class="shop_car_item" >
+        <div class="shop_car_item">
 
         </div>
-
-
       </div>
     </div>
   </div>
@@ -18,5 +16,6 @@
 <script setup>
 import CheckoutUi from '@/components/CheckoutUi.vue' //自訂勾選框
 import { userStore } from '@/stores/userStore' //現在登入的會員資料
+const currentUserStore = userStore() //目前登入會員
 </script>
 <style lang="scss"></style>

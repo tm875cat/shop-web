@@ -134,7 +134,6 @@ const productStore = useProductStore()//所有商品
 import { userStore } from '@/stores/userStore' //現在登入的會員資料
 const currentUserStore = userStore() //目前登入會員
 
-
 // 從 route.params 拿到 id，並轉成數字
 const productId = ref(Number(route.params.id))
 // @載入主頁商品
@@ -166,6 +165,8 @@ function joinShopCar() {
         size: selectedSize.value,
         quantity: selectedQuantity.value,
     }
+    currentUserStore.user.shopCar.push(product)
+
     alert('新增成功')
 
 
