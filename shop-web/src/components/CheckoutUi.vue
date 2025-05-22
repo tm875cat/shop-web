@@ -1,4 +1,5 @@
 <template>
+  <!-- 結帳畫面進度條 -->
   <div class="check_UI">
     <!-- Step 1 -->
     <div class="step_group">
