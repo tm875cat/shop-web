@@ -94,12 +94,12 @@ function minus(item) {
       padding-left: 20px;
       padding-right: 30px; // 預留右邊空間給箭頭
       position: relative; // 設為相對定位，以便放置箭頭
-background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg width='10' height='6' viewBox='0 0 10 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23646363' stroke-width='2' fill='none' fill-rule='evenodd'/%3E%3C/svg%3E");
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg width='10' height='6' viewBox='0 0 10 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23646363' stroke-width='2' fill='none' fill-rule='evenodd'/%3E%3C/svg%3E");
       background-repeat: no-repeat;
       background-position: right 10px center; // 箭頭位置
       background-size: 10px 6px; // 箭頭尺寸
       &.open {
-background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2210%22%20height%3D%226%22%20viewBox%3D%220%200%2010%206%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M1%205l4%20-4%204%204%22%20stroke%3D%22%23646363%22%20stroke-width%3D%222%22%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%2F%3E%3C%2Fsvg%3E");
+        background-image: url('data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2210%22%20height%3D%226%22%20viewBox%3D%220%200%2010%206%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M1%205l4%20-4%204%204%22%20stroke%3D%22%23646363%22%20stroke-width%3D%222%22%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%2F%3E%3C%2Fsvg%3E');
       }
     }
     .delivery {
