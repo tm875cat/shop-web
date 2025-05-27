@@ -17,7 +17,8 @@
       <RecipientInfo @updateRecipient="handleRecipientUpdate" v-if="shopStep == '2'" class=" check_content_box"
         :customerName="customerName" :customerPhone="customerPhone" :delivery="delivery" />
       <!-- 付款方式 -->
-      <PaymentMethods v-if="shopStep == '2'" class=" check_content_box" />
+      <PaymentMethods @updatePayment="handlePaymentUpdate" v-if="shopStep == '2'" class=" check_content_box"
+        :payment="payment" />
       <!-- 訂單資訊 -->
       <OrderInfo @checkout="handleCheckout" class="order_info check_content_box" />
     </div>
@@ -42,7 +43,10 @@ const customerName = ref('')//顧客姓名
 const customerPhone = ref('')//顧客電話
 const recipientName = ref('')//收件人姓名
 const recipientPhone = ref('')//收件人電話
-
+const cardNumber = ref('') //卡號
+const cardholderName = ref('') //持卡人姓名
+const validity = ref('') //有效期
+const cvs = ref('') //安全碼
 let shopStep = ref('1')
 // 接收子元件OrderInfo checkout訊息前往結帳步驟2
 function handleCheckout(message) {
@@ -66,6 +70,14 @@ function handleCustomerUpdate(cusInfo) {
 function handleRecipientUpdate(recipient) {
   recipientName.value = recipient.name
   recipientPhone.value = recipient.phone
+}
+//接收子元件 PaymentMethods 的卡號 持卡人姓名 有效期 安全碼
+function handlePaymentUpdate(cardInfo) {
+  cardNumber.value = cardInfo.cardNumber
+  cardholderName.value = cardInfo.cardholderName
+  validity.value = cardInfo.validity
+  cvs.value = cardInfo.cvs
+
 }
 </script>
 <style lang="scss">
