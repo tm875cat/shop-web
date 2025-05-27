@@ -1,10 +1,6 @@
 <template>
-  <input
-    type="checkbox"
-    :checked="modelValue"
-    @change="$emit('update:modelValue', $event.target.checked)"
-    class="custom_checkbox_input"
-  />
+  <input type="checkbox" :checked="modelValue" @change="$emit('update:modelValue', $event.target.checked)"
+    class="custom_checkbox_input" />
 </template>
 
 <script setup>
@@ -23,9 +19,10 @@ defineEmits(['update:modelValue'])
 
   width: 14px;
   height: 14px;
-  border: 2px solid #d9d9d9;
+  border: 1px solid #d9d9d9;
   border-radius: 4px;
-  background-color: transparent; /* 透明背景 */
+  background-color: transparent;
+  /* 透明背景 */
   cursor: pointer;
   box-sizing: border-box;
   position: relative;
@@ -34,7 +31,8 @@ defineEmits(['update:modelValue'])
 /* 勾選時 邊框改色，背景仍透明 */
 .custom_checkbox_input:checked {
   border-color: #a74048;
-  background-color: transparent; /* 透明 */
+  background-color: transparent;
+  /* 透明 */
 }
 
 /* 勾勾 標記 */
@@ -45,9 +43,9 @@ defineEmits(['update:modelValue'])
   top: 0.5px;
   width: 3px;
   height: 6px;
-  border: solid #a74048; /* 勾勾顏色 */
+  border: solid #a74048;
+  /* 勾勾顏色 */
   border-width: 0 2px 2px 0;
   transform: rotate(45deg);
 }
-
 </style>

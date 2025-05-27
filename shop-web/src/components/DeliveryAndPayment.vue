@@ -7,12 +7,8 @@
     <div class="delivery_and_payment_content">
       <div class="delivery">
         <h2>送貨方式</h2>
-        <select
-          :class="{ open: isDeliveryOpen }"
-          v-model="selectedDelivery"
-          @click="isDeliveryOpen = !isDeliveryOpen"
-          @blur="isDeliveryOpen = false"
-        >
+        <select :class="{ open: isDeliveryOpen }" v-model="selectedDelivery" @click="isDeliveryOpen = !isDeliveryOpen"
+          @blur="isDeliveryOpen = false">
           <option value="宅配">宅配</option>
           <option value="超商取貨">超商取貨</option>
         </select>
@@ -21,12 +17,8 @@
 
       <div class="payment">
         <h2>付款方式</h2>
-        <select
-          :class="{ open: isPaymentOpen }"
-          v-model="selectedPayment"
-          @click="isPaymentOpen = !isPaymentOpen"
-          @blur="isPaymentOpen = false"
-        >
+        <select :class="{ open: isPaymentOpen }" v-model="selectedPayment" @click="isPaymentOpen = !isPaymentOpen"
+          @blur="isPaymentOpen = false">
           <option value="信用卡">信用卡</option>
           <option value="轉帳">轉帳</option>
         </select>
@@ -36,7 +28,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, watch, defineEmits } from 'vue'
 import { userStore } from '@/stores/userStore' //現在登入的會員資料
 const currentUserStore = userStore() //目前登入會員
 const shopCar = ref(currentUserStore.user.shopCar) //購物車
@@ -44,16 +36,15 @@ const selectedDelivery = ref('') //送貨方式
 const selectedPayment = ref('') //付款方式
 const isDeliveryOpen = ref(false) //送貨方式下拉選單
 const isPaymentOpen = ref(false) //付款方式下拉選單
-// 商品數量+
-function add(item) {
-  item.quantity += 1
-}
-// 商品數量-
-function minus(item) {
-  if (item.quantity > 1) {
-    item.quantity -= 1
-  }
-}
+const emit = defineEmits(['updateDelivery', 'updatePayment'])
+// 當 selectedDelivery  改變，就發送事件給父元件
+watch(selectedDelivery, (newDelivery) => {
+  emit('updateDelivery', newDelivery)
+})
+// 當 selectedPayment  改變，就發送事件給父元件
+watch(selectedPayment, (newPayment) => {
+  emit('updatePayment', newPayment)
+})
 </script>
 
 <style scoped lang="scss">
@@ -72,13 +63,16 @@ function minus(item) {
     font-family: 'Roboto Mono', monospace;
     height: 40px;
     letter-spacing: 1px; //  字距設定
+
     h2 {
       margin-left: 20px;
     }
   }
+
   .delivery_and_payment_content {
     font-family: 'Roboto Mono', monospace;
     padding: 15px 25px;
+
     select {
       cursor: pointer;
       font-size: 12px;
@@ -98,20 +92,24 @@ function minus(item) {
       background-repeat: no-repeat;
       background-position: right 10px center; // 箭頭位置
       background-size: 10px 6px; // 箭頭尺寸
+
       &.open {
         background-image: url('data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2210%22%20height%3D%226%22%20viewBox%3D%220%200%2010%206%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M1%205l4%20-4%204%204%22%20stroke%3D%22%23646363%22%20stroke-width%3D%222%22%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%2F%3E%3C%2Fsvg%3E');
       }
     }
+
     .delivery {
       h2 {
         font-size: 10px;
         margin-bottom: 5px;
       }
+
       p {
         font-size: 10px;
         color: #cecece;
       }
     }
+
     .payment {
       h2 {
         font-size: 10px;
