@@ -5,7 +5,8 @@
             <h2>付款方式</h2>
             <p>{{ payment }}付款</p>
         </div>
-        <div class="customer_info_content" v-if="payment == '轉帳'">
+        <!-- 信用卡付款 -->
+        <div class="customer_info_content" v-if="payment == '信用卡'">
             <div class="customer_info_fields">
                 <h2>卡號</h2>
                 <input type="text" v-model="cardNumber" />
@@ -23,14 +24,28 @@
                 <input type="text" v-model="cvs" />
             </div>
 
-            <div class="customer_info_fields">
+            <div class="customer_info_fields illustrate">
                 附上金流服務說明
             </div>
         </div>
-        <div class="customer_info_content" v-else-if="payment == '信用卡'">
+        <!-- 轉帳付款 -->
+        <div class="customer_info_content" v-else-if="payment == '轉帳'">
             <div class="customer_info_fields">
-                <h2>卡號</h2>
-                <input type="text" v-model="cardNumber" />
+                <h2>請提供
+                    <span>轉帳帳號末五碼</span>
+                    以方便我們查詢！
+                </h2>
+                <input type="text" v-model="transferAccount" @input="onInputAccount" />
+            </div>
+
+            <div class="customer_info_fields">
+                <h2>收款人:詹蕙瑜
+                </h2>
+                <p>帳戶：彰化銀行（009）123456789086</p>
+
+            </div>
+            <div class="customer_info_fields">
+                <p>完成轉帳我們會盡快寄信通知已完成訂單消息！</p>
             </div>
 
         </div>
@@ -43,25 +58,32 @@ const cardNumber = ref('') //卡號
 const cardholderName = ref('') //持卡人姓名
 const validity = ref('') //有效期
 const cvs = ref('') //安全碼
+const transferAccount = ref('')//轉帳帳號末五碼
 // 接收父元件的付款方式
 const props = defineProps({
     payment: String//付款方式
 })
-const emit = defineEmits(['updateCustomer']) //emit 收件人資料
-//監聽 收件人姓名 電話傳給父元件
-watch([cardNumber, cardholderName, validity, cvs], ([newCardNumber, newCardholderName, newValidity, newCvs]) => {
+//轉帳帳號末五碼輸入限制
+const onInputAccount = (e) => {
+    // 只留數字，限制 5 碼
+    transferAccount.value = e.target.value.replace(/\D/g, '').slice(0, 5)
+}
+const emit = defineEmits(['updateCustomer']) //emit 付款資料
+//監聽 付款資料
+watch([cardNumber, cardholderName, validity, cvs, transferAccount], ([newCardNumber, newCardholderName, newValidity, newCvs, newTransferAccount]) => {
     emit('updatePayment', {
         cardNumber: newCardNumber,
         cardholderName: newCardholderName,
         validity: newValidity,
-        cvs: newCvs
+        cvs: newCvs,
+        transferAccount: newTransferAccount
     })
 })
 
 </script>
 
 <style scoped lang="scss">
-// 購物車
+// 付款方式
 .customer_info {
     border: 1px solid #ccc; // 外框線
     width: 100%;
@@ -84,6 +106,8 @@ watch([cardNumber, cardholderName, validity, cvs], ([newCardNumber, newCardholde
 
         h2 {
             margin-left: 20px;
+
+
         }
     }
 
@@ -97,6 +121,10 @@ watch([cardNumber, cardholderName, validity, cvs], ([newCardNumber, newCardholde
 
             h2 {
                 margin-bottom: 6px;
+
+                span {
+                    font-weight: bold;
+                }
             }
 
             input {
@@ -104,11 +132,14 @@ watch([cardNumber, cardholderName, validity, cvs], ([newCardNumber, newCardholde
                 border: 1px solid #d9d9d9;
                 min-height: 25px;
             }
+
+
         }
 
-        .customer_eamil {
-            margin-bottom: 15px;
+        .illustrate {
+            color: #CBCBCB;
         }
+
     }
 }
 </style>

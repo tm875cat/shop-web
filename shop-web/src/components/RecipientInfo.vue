@@ -66,7 +66,7 @@ const phoneInput = (event) => {
 </script>
 
 <style scoped lang="scss">
-// 購物車
+// 收件人資料
 .customer_info {
   border: 1px solid #ccc; // 外框線
   width: 100%;

@@ -15,13 +15,7 @@
       </div>
       <div class="customer_phone customer_info_fields">
         <h2>電話號碼</h2>
-        <input
-          type="text"
-          v-model="phoneNumber"
-          inputmode="numeric"
-          pattern="[0-9]*"
-          @input="phoneInput"
-        />
+        <input type="text" v-model="phoneNumber" inputmode="numeric" pattern="[0-9]*" @input="phoneInput" />
       </div>
     </div>
   </div>
@@ -49,7 +43,7 @@ const phoneInput = (event) => {
 </script>
 
 <style scoped lang="scss">
-// 購物車
+// 顧客資料
 .customer_info {
   border: 1px solid #ccc; // 外框線
   width: 100%;
@@ -64,25 +58,31 @@ const phoneInput = (event) => {
     font-family: 'Roboto Mono', monospace;
     height: 40px;
     letter-spacing: 1px; //  字距設定
+
     h2 {
       margin-left: 20px;
     }
   }
+
   .customer_info_content {
     font-family: 'Roboto Mono', monospace;
     padding: 15px 25px;
     font-size: 10px;
+
     .customer_info_fields {
       margin-bottom: 8px;
+
       h2 {
         margin-bottom: 6px;
       }
+
       input {
         width: 100%;
         border: 1px solid #d9d9d9;
         min-height: 25px;
       }
     }
+
     .customer_eamil {
       margin-bottom: 15px;
     }

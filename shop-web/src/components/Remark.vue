@@ -5,45 +5,31 @@
             <h2>備註</h2>
         </div>
         <div class="customer_info_content">
-            <div class="customer_info_fields customer_name">
-                <h2>收件人姓名</h2>
-                <input type="text" v-model="recipientName" />
+            <div class="customer_info_fields ">
+                <h2>有甚麼要告訴賣家的嗎</h2>
+                <textarea placeholder="" v-model="messageForSeller"></textarea>
             </div>
-            <div class="customer_info_fields customer_eamil">
-                <h2>電子信箱</h2>
-                <p>{{ email }}</p>
-            </div>
-            <div class="customer_phone customer_info_fields">
-                <h2>電話號碼</h2>
-                <input type="text" v-model="phoneNumber" inputmode="numeric" pattern="[0-9]*" @input="phoneInput" />
-            </div>
+
         </div>
     </div>
 </template>
 
 <script setup>
 import { ref, watch } from 'vue'
-import { userStore } from '@/stores/userStore' //現在登入的會員資料
-const currentUserStore = userStore() //目前登入會員
-const email = ref(currentUserStore.user.email) //使用者信箱
-const recipientName = ref('') //收件人姓名
-const phoneNumber = ref('') //電話
-const emit = defineEmits(['updateCustomer']) //emit 收件人資料
-//監聽 收件人姓名 電話傳給父元件
-watch([recipientName, phoneNumber], ([newName, newPhone]) => {
-    emit('updateCustomer', {
-        name: newName,
-        phone: newPhone,
+
+const messageForSeller = ref('') //給賣家的訊息
+const emit = defineEmits(['updateMessageForSeller']) //emit 給賣家的訊息
+//監聽 給賣家的訊息傳給父元件
+watch(messageForSeller, (newVal) => {
+    emit('updateMessageForSeller', {
+        messageForSeller: newVal,
     })
 })
-// 只允許數字，限制最多 10 碼
-const phoneInput = (event) => {
-    phoneNumber.value = event.target.value.replace(/\D/g, '').slice(0, 10)
-}
+
 </script>
 
 <style scoped lang="scss">
-// 購物車
+// 備註
 .customer_info {
     border: 1px solid #ccc; // 外框線
     width: 100%;
@@ -76,16 +62,14 @@ const phoneInput = (event) => {
                 margin-bottom: 6px;
             }
 
-            input {
+            textarea {
                 width: 100%;
                 border: 1px solid #d9d9d9;
-                min-height: 25px;
+                min-height: 83px;
+                resize: none; //  不允許使用者調整大小
             }
         }
 
-        .customer_eamil {
-            margin-bottom: 15px;
-        }
     }
 }
 </style>

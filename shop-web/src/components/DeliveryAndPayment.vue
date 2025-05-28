@@ -48,7 +48,7 @@ watch(selectedPayment, (newPayment) => {
 </script>
 
 <style scoped lang="scss">
-// 購物車
+// 送貨與付款方式
 .delivery_and_payment {
   border: 1px solid #ccc; // 外框線
   width: 100%;
