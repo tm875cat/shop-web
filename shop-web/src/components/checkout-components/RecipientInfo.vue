@@ -1,27 +1,27 @@
 <template>
   <!-- 收件人資料 -->
-  <div class="customer_info">
-    <div class="customer_info_header">
+  <div class="recipient_info">
+    <div class="recipient_info_header">
       <h2>收件人資料</h2>
       <p>選擇{{ delivery }} NT$0</p>
     </div>
-    <div class="customer_info_content">
+    <div class="recipient_info_content">
       <div class=" custom_input">
         <CustomCheckbox v-model="sameAsCustomer" />
         <p>收件人資料與顧客資料相同</p>
       </div>
-
-      <div class="customer_info_fields customer_name">
+      <div class="recipient_info_fields">
         <h2>收件人姓名</h2>
         <input type="text" v-model="recipientName" />
       </div>
-      <div class="customer_info_fields customer_eamil">
-        <h2>電子信箱</h2>
-        <p>{{ email }}</p>
-      </div>
-      <div class="customer_phone customer_info_fields">
+      <div class=" recipient_info_fields">
         <h2>電話號碼</h2>
         <input type="text" v-model="phoneNumber" inputmode="numeric" pattern="[0-9]*" @input="phoneInput" />
+      </div>
+      <div class="recipient_info_fields">
+        <h2 v-if="delivery == '超商取貨'">選擇門市</h2>
+        <h2 v-else-if="delivery == '宅配'">宅配地址</h2>
+        <input type="text" v-model="address" />
       </div>
     </div>
   </div>
@@ -36,6 +36,8 @@ const email = ref(currentUserStore.user.email) //使用者信箱
 const recipientName = ref('') //收件人姓名
 const phoneNumber = ref('') //電話
 const sameAsCustomer = ref(false)//是否勾選收件人資料與顧客資料相同
+const address = ref('')//宅配或門市地址
+
 // 接收父元件的電話 姓名參數
 const props = defineProps({
   customerName: String,//顧客姓名
@@ -44,10 +46,11 @@ const props = defineProps({
 })
 const emit = defineEmits(['updateRecipient']) //emit 收件人資料
 //監聽 收件人姓名 電話傳給父元件
-watch([recipientName, phoneNumber], ([newName, newPhone]) => {
+watch([recipientName, phoneNumber, address], ([newName, newPhone, newAddress]) => {
   emit('updateRecipient', {
     name: newName,
     phone: newPhone,
+    address: newAddress
   })
 })
 // 勾選時，自動套用顧客資料
@@ -67,12 +70,12 @@ const phoneInput = (event) => {
 
 <style scoped lang="scss">
 // 收件人資料
-.customer_info {
+.recipient_info {
   border: 1px solid #ccc; // 外框線
   width: 100%;
   background: white;
 
-  .customer_info_header {
+  .recipient_info_header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -92,7 +95,7 @@ const phoneInput = (event) => {
     }
   }
 
-  .customer_info_content {
+  .recipient_info_content {
     font-family: 'Roboto Mono', monospace;
     padding: 15px 25px;
     font-size: 10px;
@@ -108,7 +111,7 @@ const phoneInput = (event) => {
       }
     }
 
-    .customer_info_fields {
+    .recipient_info_fields {
       margin-bottom: 8px;
 
       h2 {
@@ -120,10 +123,6 @@ const phoneInput = (event) => {
         border: 1px solid #d9d9d9;
         min-height: 25px;
       }
-    }
-
-    .customer_eamil {
-      margin-bottom: 15px;
     }
   }
 }

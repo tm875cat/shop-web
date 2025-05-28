@@ -1,11 +1,11 @@
 <template>
     <!-- 備註 -->
-    <div class="customer_info">
-        <div class="customer_info_header">
+    <div class="remark">
+        <div class="remark_header">
             <h2>備註</h2>
         </div>
-        <div class="customer_info_content">
-            <div class="customer_info_fields ">
+        <div class="remark_content">
+            <div class="remark_fields ">
                 <h2>有甚麼要告訴賣家的嗎</h2>
                 <textarea placeholder="" v-model="messageForSeller"></textarea>
             </div>
@@ -30,12 +30,12 @@ watch(messageForSeller, (newVal) => {
 
 <style scoped lang="scss">
 // 備註
-.customer_info {
+.remark {
     border: 1px solid #ccc; // 外框線
     width: 100%;
     background: white;
 
-    .customer_info_header {
+    .remark_header {
         display: flex;
         align-items: center;
         font-weight: bold;
@@ -50,12 +50,12 @@ watch(messageForSeller, (newVal) => {
         }
     }
 
-    .customer_info_content {
+    .remark_content {
         font-family: 'Roboto Mono', monospace;
         padding: 15px 25px;
         font-size: 10px;
 
-        .customer_info_fields {
+        .remark_fields {
             margin-bottom: 8px;
 
             h2 {

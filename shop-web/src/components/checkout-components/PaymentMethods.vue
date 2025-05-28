@@ -1,36 +1,36 @@
 <template>
     <!-- 付款方式 -->
-    <div class="customer_info">
-        <div class="customer_info_header">
+    <div class="payment_methods">
+        <div class="payment_methods_header">
             <h2>付款方式</h2>
             <p>{{ payment }}付款</p>
         </div>
         <!-- 信用卡付款 -->
-        <div class="customer_info_content" v-if="payment == '信用卡'">
-            <div class="customer_info_fields">
+        <div class="payment_methods_content" v-if="payment == '信用卡'">
+            <div class="payment_methods_fields">
                 <h2>卡號</h2>
                 <input type="text" v-model="cardNumber" />
             </div>
-            <div class="customer_info_fields">
+            <div class="payment_methods_fields">
                 <h2>持卡人姓名</h2>
                 <input type="text" v-model="cardholderName" />
             </div>
-            <div class="customer_info_fields">
+            <div class="payment_methods_fields">
                 <h2>有效期（ＭＭ/ＹＹ）</h2>
                 <input type="text" v-model="validity" />
             </div>
-            <div class="customer_info_fields">
+            <div class="payment_methods_fields">
                 <h2>安全碼</h2>
                 <input type="text" v-model="cvs" />
             </div>
 
-            <div class="customer_info_fields illustrate">
+            <div class="payment_methods_fields illustrate">
                 附上金流服務說明
             </div>
         </div>
         <!-- 轉帳付款 -->
-        <div class="customer_info_content" v-else-if="payment == '轉帳'">
-            <div class="customer_info_fields">
+        <div class="payment_methods_content" v-else-if="payment == '轉帳'">
+            <div class="payment_methods_fields">
                 <h2>請提供
                     <span>轉帳帳號末五碼</span>
                     以方便我們查詢！
@@ -38,13 +38,13 @@
                 <input type="text" v-model="transferAccount" @input="onInputAccount" />
             </div>
 
-            <div class="customer_info_fields">
+            <div class="payment_methods_fields">
                 <h2>收款人:詹蕙瑜
                 </h2>
                 <p>帳戶：彰化銀行（009）123456789086</p>
 
             </div>
-            <div class="customer_info_fields">
+            <div class="payment_methods_fields">
                 <p>完成轉帳我們會盡快寄信通知已完成訂單消息！</p>
             </div>
 
@@ -84,12 +84,12 @@ watch([cardNumber, cardholderName, validity, cvs, transferAccount], ([newCardNum
 
 <style scoped lang="scss">
 // 付款方式
-.customer_info {
+.payment_methods {
     border: 1px solid #ccc; // 外框線
     width: 100%;
     background: white;
 
-    .customer_info_header {
+    .payment_methods_header {
         display: flex;
         align-items: center;
         font-weight: bold;
@@ -111,12 +111,12 @@ watch([cardNumber, cardholderName, validity, cvs, transferAccount], ([newCardNum
         }
     }
 
-    .customer_info_content {
+    .payment_methods_content {
         font-family: 'Roboto Mono', monospace;
         padding: 15px 25px;
         font-size: 10px;
 
-        .customer_info_fields {
+        .payment_methods_fields {
             margin-bottom: 8px;
 
             h2 {
