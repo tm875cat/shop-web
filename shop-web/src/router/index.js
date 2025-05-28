@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHashHistory } from 'vue-router'
 import Anti from '../views/AntiView.vue'
 import AllProduct from '../views/AllProductView.vue'
 import Product from '../views/ProductView.vue'
@@ -8,7 +8,7 @@ import Checkout from '../views/CheckoutView.vue'
 import { useUserDataStore } from '@/stores/userDataStore' //現有所有會員資料(用來登入比對)
 import { userStore } from '@/stores/userStore' //現在登入的會員資料
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHashHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
