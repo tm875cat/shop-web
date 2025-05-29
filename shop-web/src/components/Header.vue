@@ -257,7 +257,6 @@ header {
 
     //點擊後的搜尋框區域
     .search_content {
-        position: fixed;
         top: 50px;
         left: 0;
         width: 100%;
@@ -298,8 +297,8 @@ header {
     flex-direction: column;
     position: fixed;
     top: 0;
-    left: -400px;
-    width: 400px;
+    left: -300px;
+    width: 300px;
     height: 100vh;
     background: #fdfdfd;
     color: rgb(0, 0, 0);
@@ -370,8 +369,8 @@ header {
     align-items: center;
     position: fixed;
     top: 0;
-    left: -400px;
-    width: 400px;
+    left: -300px;
+    width: 300px;
     height: 100vh;
     background: #fdfdfd;
     color: rgb(0, 0, 0);
