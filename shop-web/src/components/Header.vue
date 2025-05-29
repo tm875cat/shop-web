@@ -40,10 +40,10 @@
         </div>
         <!-- 未登入 -->
         <div v-else class="member_area">
-            <div class="user_field" @click="goToLogin()">
+            <div class="user_field" @click="goToLogin(), closeMenu()">
                 <img src="@/components/icons/member.png" alt="登入" />會員登入
             </div>
-            <div class="user_field" @click="goToApply()">
+            <div class="user_field" @click="goToApply(), closeMenu()">
                 <img src="@/components/icons/apply.png" alt="註冊" />新用戶註冊
             </div>
         </div>
@@ -292,7 +292,6 @@ header {
 
 // 左邊選單
 .left_side_menu {
-
     display: flex;
     flex-direction: column;
     position: fixed;
@@ -329,7 +328,8 @@ header {
     // 會員區域
     .member_area {
         margin-top: auto;
-        padding: 40px 40px;
+        padding-bottom: 30px;
+        padding-left: 30px;
 
         .user_field {
             display: flex;
@@ -337,7 +337,7 @@ header {
             margin-top: 10px;
             font-size: 16px;
             cursor: pointer;
-            width: 45%;
+            width: 100%;
 
             img {
                 width: 45px;

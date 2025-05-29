@@ -36,6 +36,7 @@ onMounted(() => {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 0px;
+  padding-bottom: 100px;
 }
 
 /* 頁面切換動畫 */

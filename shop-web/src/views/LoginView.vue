@@ -16,7 +16,7 @@
         <!-- 註冊區域 -->
         <div class="to_apply">
             <h2>還不是會員?</h2>
-            <button>註冊會員</button>
+            <button @click="goToApply()">註冊會員</button>
         </div>
     </div>
 </template>
@@ -94,6 +94,11 @@ onBeforeUnmount(() => {
 // @頁面跳轉
 import { useRouter } from 'vue-router'
 const router = useRouter()
+//跳到註冊頁面
+function goToApply() {
+    router.push({ name: 'apply' })
+}
+//跳到首頁
 function goToAnti() {
     router.push({ name: 'anti' })
 }
@@ -101,6 +106,8 @@ function goToAnti() {
 <style lang="scss">
 // 歡迎
 .login_page {
+    padding: 0 25px;
+
     .welcome {
         margin-top: 120px;
         display: flex;
@@ -130,9 +137,14 @@ function goToAnti() {
             font-size: 15px;
             padding-left: 20px;
             border: 1px solid #d9d9d9;
-            color: #d9d9d9;
+            color: #a74048;
             min-height: 40px;
             margin-bottom: 12px;
+
+            &:focus {
+                border: 2px solid #a74048;
+                outline: none; // 移除預設外框
+            }
 
             &::placeholder {
                 color: #d9d9d9;

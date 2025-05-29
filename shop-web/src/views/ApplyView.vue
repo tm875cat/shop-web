@@ -32,14 +32,14 @@
             <!-- 註冊區域 -->
             <div class="to_login">
                 <h2>已註冊會員?</h2>
-                <button>登入</button>
+                <button @click="goToLogin">登入</button>
             </div>
         </div>
         <!-- 註冊完成畫面 -->
         <div class="main_page_finish" v-else>
             <img src="@/components/icons/member.png" alt="用戶頭貼" />
             <p>{{ userName }} 您好, 歡迎加入</p>
-            <button>回到購物車</button>
+            <button @click="goToHome">回到購物車</button>
         </div>
     </div>
 </template>
@@ -48,6 +48,7 @@ import { ref } from 'vue'
 import CustomCheckbox from '@/components/CustomCheckbox.vue' //自訂勾選框
 import { useUserDataStore } from '@/stores/userDataStore' //現有所有會員資料
 import { userStore } from '@/stores/userStore' //現在登入的會員資料
+import { useRoute, useRouter } from 'vue-router'
 
 // @@註冊邏輯
 const inputName = ref('') //用戶名
@@ -62,11 +63,20 @@ const inputPswError = ref(false) //密碼error顯示
 const agreeTerms = ref(false) //同意條款
 const agreeNews = ref(false) //同意最新消息
 const userName = ref('') //目前登入的用戶名
+const router = useRouter()
 //限定只能打英文數字及符號
 const filterEnglishSymbols = (value) => {
     return value.replace(/[^\x00-\x7F]/g, '')
 }
 
+//回首頁
+function goToHome() {
+    router.push({ name: 'anti' })
+}
+//跳到登入頁面
+function goToLogin() {
+    router.push({ name: 'login' })
+}
 const allUsersStore = useUserDataStore() //現有全部會員資料
 const currentUserStore = userStore() //現在登入的會員
 //@註冊
