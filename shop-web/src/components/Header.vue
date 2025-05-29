@@ -68,7 +68,7 @@
 import IconSearch from '@/components/icons/IconSearch.vue'
 import IconOpenSearch from '@/components/icons/IconOpenSearch.vue'
 import IconShop from '@/components/icons/IconShop.vue'
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { userStore } from '@/stores/userStore' //現在登入的會員資料
 const currentUserStore = userStore() //目前登入會員
@@ -79,6 +79,36 @@ const isShopCarOpen = ref(false)// 購物車選單彈出狀態
 const isSearchOpen = ref(false)//上方搜尋框彈出狀態
 const isLogin = computed(() => currentUserStore.user.email !== '')// 根據 user 裡的 email 是否存在判斷是否登入
 const userShopCar = computed(() => currentUserStore.user.shopCar)//載入user的購物車
+let startX = 0 //滑動起點X 軸位置
+let endX = 0//滑動終點X 軸位置
+// 使用者觸控開始時，紀錄起始點位置
+function handleTouchStart(e) {
+    startX = e.touches[0].clientX
+}
+// 使用者觸控結束時，取得結束點位置並判斷滑動方向與距離
+function handleTouchEnd(e) {
+    endX = e.changedTouches[0].clientX
+    const deltaX = endX - startX
+
+    // 如果滑動距離小於 -50，表示是往左滑且距離夠大（避免誤觸）
+    if (deltaX < -50) {
+        // 如果有任何側邊欄是打開的，就關閉它們
+        if (isLeftOpen.value || isShopCarOpen.value) {
+            closeMenu()
+        }
+    }
+}
+// 元件掛載時，綁定觸控事件監聽器到整個視窗（window）
+onMounted(() => {
+    window.addEventListener('touchstart', handleTouchStart)
+    window.addEventListener('touchend', handleTouchEnd)
+})
+
+// 元件卸載前，移除事件監聽器，避免記憶體洩漏
+onBeforeUnmount(() => {
+    window.removeEventListener('touchstart', handleTouchStart)
+    window.removeEventListener('touchend', handleTouchEnd)
+})
 //登出
 function signout() {
     isLeftOpen.value = false
