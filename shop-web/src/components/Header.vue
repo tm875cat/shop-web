@@ -310,12 +310,13 @@ header {
     }
 
     ul {
-        margin-top: 100px;
+        margin-top: 150px;
         list-style: none;
         padding: 0;
 
         li {
-            margin: 20px 50px;
+            height: 42px;
+            margin-left: 30px;
 
             a {
                 color: rgb(0, 0, 0);

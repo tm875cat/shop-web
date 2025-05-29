@@ -2,12 +2,17 @@
     <div class="product_page" v-if="pageProduct">
         <!-- 主要圖片 -->
         <div class="main_pic">
-            <img :src="pageProduct.pic1" :alt="pageProduct.name" />
+            <img :src="mainPic" :alt="pageProduct.name" :class="{ zoomed: isZoomed }"
+                @click="isZoomed && toggleZoom()" />
+            <div class="magnifier" @click="toggleZoom">
+                <IconMagnifier />
+            </div>
+
         </div>
         <!-- 其他圖片清單 -->
         <div class="pic_list">
             <img v-for="(img, index) in getAllPics(pageProduct)" :key="index" :src="img"
-                :alt="pageProduct.name + ' 圖片' + (index + 1)" />
+                :alt="pageProduct.name + ' 圖片' + (index + 1)" @click="mainPic = img" />
         </div>
         <!-- 商品資訊 -->
         <div class="product_info">
@@ -114,10 +119,6 @@
             </div>
         </div>
     </div>
-    <div v-else>
-        <p>找不到商品</p>
-    </div>
-
 </template>
 <script setup>
 import { useRoute, useRouter } from 'vue-router'
@@ -127,18 +128,22 @@ import { computed, ref, watchEffect, watch, onMounted } from 'vue'
 import IconAdd from '@/components/icons/IconAdd.vue'
 import IconMinus from '@/components/icons/IconMinus.vue'
 import IconKorea from '@/components/icons/IconKorea.vue'
+import IconMagnifier from '@/components/icons/IconMagnifier.vue'
 // Router & Store
 const route = useRoute()
 const router = useRouter()
 const productStore = useProductStore()//所有商品
 import { userStore } from '@/stores/userStore' //現在登入的會員資料
 const currentUserStore = userStore() //目前登入會員
+const isZoomed = ref(false)//圖片放大\
+//放大圖片切換
+function toggleZoom() {
+    isZoomed.value = !isZoomed.value
+}
 
 // 從 route.params 拿到 id，並轉成數字
 const productId = ref(Number(route.params.id))
-// @載入主頁商品
-// 找到對應的商品
-// 取得當前商品資料
+// 取得當前商品資料 找到對應的商品
 const pageProduct = computed(() => {
     return productStore.products.find(p => p.id === productId.value)
 })
@@ -146,6 +151,11 @@ const pageProduct = computed(() => {
 const getAllPics = (product) => {
     return [product.pic, product.pic1, product.pic2, product.pic3];
 };
+const mainPic = ref()//中間大圖路徑
+//預設中間大圖用pageProduct第一張
+onMounted(() => {
+    mainPic.value = pageProduct.value.pic
+})
 //加入購物車
 function joinShopCar() {
     //要登入才能加入購物車
@@ -200,6 +210,7 @@ function updateSelectedQuantity(num) {
     }
     selectedQuantity.value += num
 }
+//商品顏色 數量 size初始化
 const updateSelections = () => {
     if (pageProduct.value?.color?.length) {
         selectedColor.value = pageProduct.value.color[0]
@@ -266,16 +277,44 @@ watchEffect(() => {
 // 控制目前選中的區塊（預設顯示商品描述）
 const activeTab = ref('describe')
 </script>
-<style lang="scss">
+<style scoped lang="scss">
 // 主要圖片
 .product_page {
 
     .main_pic {
+
         width: 100%;
+        position: relative;
+
 
         img {
             width: 100%;
+            height: 100%;
+
+            &.zoomed {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100vw;
+                height: 100vh;
+                object-fit: contain;
+                background: rgba(0, 0, 0, 0.9);
+                z-index: 9999;
+                margin: 0;
+                cursor: zoom-out;
+            }
         }
+
+        .magnifier {
+
+            cursor: pointer;
+            position: absolute;
+            bottom: 20px;
+            right: 10px;
+            z-index: 2;
+        }
+
+
     }
 
     // 其他圖片清單
@@ -285,6 +324,7 @@ const activeTab = ref('describe')
         margin-top: 20px;
 
         img {
+            cursor: pointer;
             width: 23%;
             aspect-ratio: 1 / 1; // 正方形
             object-fit: cover; // 裁切圖片來填滿容器

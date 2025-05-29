@@ -48,7 +48,6 @@ import { ref } from 'vue'
 import CustomCheckbox from '@/components/CustomCheckbox.vue' //自訂勾選框
 import { useUserDataStore } from '@/stores/userDataStore' //現有所有會員資料
 import { userStore } from '@/stores/userStore' //現在登入的會員資料
-import { onMounted } from 'vue'
 
 // @@註冊邏輯
 const inputName = ref('') //用戶名

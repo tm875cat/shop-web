@@ -41,7 +41,7 @@ onMounted(() => {
 /* 頁面切換動畫 */
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 1s;
+  transition: opacity 0.3s;
 }
 
 .fade-enter-from,
